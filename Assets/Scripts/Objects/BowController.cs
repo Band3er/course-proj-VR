@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class BowController : MonoBehaviour
 {
@@ -45,16 +46,23 @@ public class BowController : MonoBehaviour
     }
 
     // Mana opusa care apuca "coarda"
-    public void StartDraw(UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInteractor hand)
+    public void StartDraw(XRBaseInteractor hand)
     {
+        Debug.Log("StartDraw called. Hand: " + (hand != null) + " isDrawing: " + isDrawing);
+
         if (isDrawing) return;
+
         drawHand = hand;
         isDrawing = true;
 
-        // Spawn arrow la nock point
+        Debug.Log("Arrow Prefab: " + (arrowPrefab != null));
+        Debug.Log("NockPoint: " + (nockPoint != null));
+
         currentArrow = Instantiate(arrowPrefab, nockPoint.position, nockPoint.rotation);
         currentArrow.GetComponent<Rigidbody>().isKinematic = true;
         currentArrow.GetComponent<ArrowController>().SetNocked(true);
+
+        Debug.Log("Arrow spawned: " + (currentArrow != null));
     }
 
     public void Release()

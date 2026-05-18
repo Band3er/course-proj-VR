@@ -4,6 +4,17 @@
 
 
 
+template <typename R>
+struct VirtualFuncInvoker0
+{
+	typedef R (*Func)(void*, const RuntimeMethod*);
+
+	static inline R Invoke (Il2CppMethodSlot slot, RuntimeObject* obj)
+	{
+		const VirtualInvokeData& invokeData = il2cpp_codegen_get_virtual_invoke_data(slot, obj);
+		return ((Func)invokeData.methodPtr)(obj, invokeData.method);
+	}
+};
 
 struct Action_1_tB8CA4FD5AE31D22DB74D262F9D03ACFA1C0B2CA8;
 struct Action_1_tCB862C932EAF49C2968D3AD96CEDF6D2DFED41F0;
@@ -55,6 +66,7 @@ struct Int32U5BU5D_t19C97395396A72ECAF310612F0760F165060314C;
 struct ObjectU5BU5D_t8061030B0A12A55D5AD8652A20C922FE99450918;
 struct SingleU5BU5D_t89DEFE97BCEDB5857010E79ECE0F52CF6E93B87C;
 struct StringU5BU5D_t7674CD946EC0CE7B3AE0BE70E6EE85F2ECD9F248;
+struct TypeU5BU5D_t97234E1129B564EB38B8D85CAC2AD8B5B9522FFB;
 struct Vector3U5BU5D_tFF1859CCE176131B909E2044F76443064254679C;
 struct SectionU5BU5D_t9D3017555FFF42E71BE91904A2486EAF429F24C4;
 struct ActivateEvent_tA1D392B588AC99958CB847AE6911DC5131BCFB43;
@@ -62,6 +74,7 @@ struct AnimationCurve_tCBFFAAD05CEBB35EF8D8631BD99914BE1A6BB354;
 struct ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32;
 struct ArrowCollisionHandler_t3AA2D710F5B376DCA7F73FDF5DBECDC8B785A7DC;
 struct ArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700;
+struct Binder_t91BFCE95A7057FADF4D8A1A342AFE52872246235;
 struct BowController_tAF7278C12099EFA4B37604A8B051849671F5C653;
 struct Calendar_t0A117CC7532A54C17188C2EFEA1F79DB20DF3A3B;
 struct CancellationTokenSource_tAAE1E0033BCFC233801F8CB4CED5C852B350CB7B;
@@ -93,6 +106,7 @@ struct IXRSelectInteractable_t647A7E3382497396EA1A9546574AEC0FBC9BC4AF;
 struct IXRSelectInteractor_tF89F25345282BDE348CC5A11BBACE44810BD29CC;
 struct IXRTargetFilter_t51750E0C671ECA90F38CC75BCD395285E61D2778;
 struct InvokableCallList_t309E1C8C7CE885A0D2F98C84CEA77A8935688382;
+struct MemberFilter_tF644F1AE82F611B677CE1964D5A3277DDA21D553;
 struct MethodInfo_t;
 struct MonoBehaviour_t532A11E69716D348D8AA7F854AFCBFCB8AD17F71;
 struct NumberFormatInfo_t8E26808B202927FEBF9064FCFEEA4D6E076E6472;
@@ -112,6 +126,7 @@ struct TeleportationMonitor_tC9AB34520A1A0D6D2F18DD2067601DE1405C72C6;
 struct TextInfo_tD3BAFCFD77418851E7D5CB8D2588F47019E414B4;
 struct Texture2D_tE6505BC111DD8A424A9DBE8E05D7D09E11FFFCF4;
 struct Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1;
+struct Type_t;
 struct UnitySourceGeneratedAssemblyMonoScriptTypes_v1_tC95F24D0C6E6B77389433852BB389F39C692926E;
 struct Void_t4861ACF8F4594C3437BB48B6E56783494B843915;
 struct XRBaseInteractable_t76185BD6DF3BC86B3CDD82E6368C3C7157E39AE4;
@@ -147,10 +162,15 @@ IL2CPP_EXTERN_C String_t* _stringLiteral3178F437FB59EA83041FD776CA1B00C63688A3D2
 IL2CPP_EXTERN_C String_t* _stringLiteral3C4C56A3FC90DE461A20E45F7B17D7346D737411;
 IL2CPP_EXTERN_C String_t* _stringLiteral3DFB7582582968D1AFB66AE687E02CF907968C4F;
 IL2CPP_EXTERN_C String_t* _stringLiteral3EBB9A38A97662C2D8E12F1E8E95FE80A2B17A4C;
+IL2CPP_EXTERN_C String_t* _stringLiteral4233D0CFF92FB031104122117F774213A888737F;
+IL2CPP_EXTERN_C String_t* _stringLiteral456FB2B4315E07211FDC84271FA5B8F0D51D5BEA;
+IL2CPP_EXTERN_C String_t* _stringLiteral4D3111965DDB11D6A0B7E19DDE4166C37BB3ED51;
 IL2CPP_EXTERN_C String_t* _stringLiteral50639CAD49418C7B223CC529395C0E2A3892501C;
 IL2CPP_EXTERN_C String_t* _stringLiteral6628F160C7310A0FDDA1F3E0F66F5233C7CE2236;
 IL2CPP_EXTERN_C String_t* _stringLiteral6790F5A313E4F3D7D9EE743046C665DE8D5FE0F2;
+IL2CPP_EXTERN_C String_t* _stringLiteral695711123D9386B827993F07EA0EF508A7C5C492;
 IL2CPP_EXTERN_C String_t* _stringLiteral70078409BB1C7AEA916BAC4BF56E027303333076;
+IL2CPP_EXTERN_C String_t* _stringLiteral77FD4A81A461031944CD0D12B907B00D0B8B82E2;
 IL2CPP_EXTERN_C String_t* _stringLiteral7A773B03DCC74E2D6E1C9BAE6C27532CEEEE10FA;
 IL2CPP_EXTERN_C String_t* _stringLiteral7D7FB3B9129493A206732B8BDA6567BEEF3A7590;
 IL2CPP_EXTERN_C String_t* _stringLiteral8CE5F9E7834AD343CBD8B38BB6AC46C7EF485CB3;
@@ -161,14 +181,17 @@ IL2CPP_EXTERN_C String_t* _stringLiteralC37B70B4AEB923BCC6D022EDED3D67683E795B4C
 IL2CPP_EXTERN_C String_t* _stringLiteralC3D5FA405D85E10033561DF9357B57DA4D956357;
 IL2CPP_EXTERN_C String_t* _stringLiteralC4A08D0ADDC0A8D2A6096176FC074944A7301A2A;
 IL2CPP_EXTERN_C String_t* _stringLiteralC62C64F00567C5368CAE37F4E64E1E82FF785677;
+IL2CPP_EXTERN_C String_t* _stringLiteralC719813EBF2B60985C8D1F4A78AD78E33939CB26;
 IL2CPP_EXTERN_C String_t* _stringLiteralD03C6383ADA491871068E71CF4505718CD987E0C;
 IL2CPP_EXTERN_C String_t* _stringLiteralD9702737AAEE1B2A8ACE969B738FA551B4A25279;
 IL2CPP_EXTERN_C String_t* _stringLiteralDA39A3EE5E6B4B0D3255BFEF95601890AFD80709;
+IL2CPP_EXTERN_C String_t* _stringLiteralDB8B900F135E4FF540B1C0C8EF1A90D95C24F03A;
 IL2CPP_EXTERN_C String_t* _stringLiteralE059A720387EFD8337AC0972DDDDC2B95FECE265;
 IL2CPP_EXTERN_C String_t* _stringLiteralE8C9F69263CE1042B22A497A7835D6AD8C9B9C30;
 IL2CPP_EXTERN_C String_t* _stringLiteralE9BC4BC1AB6E55FE98908C5753E82F66DEED9641;
 IL2CPP_EXTERN_C String_t* _stringLiteralE9E5812614DAB6B3A861A9B029B8267EA7918B20;
 IL2CPP_EXTERN_C String_t* _stringLiteralED45F4AF48C69346087C97D466BF405E270AABE2;
+IL2CPP_EXTERN_C String_t* _stringLiteralEE54B9267EF77EDDC81C833347FA75BC10D802A8;
 IL2CPP_EXTERN_C String_t* _stringLiteralF182C6A091FE5F94F39A9EE9D37603C8BA0E16CB;
 IL2CPP_EXTERN_C String_t* _stringLiteralF3E84B722399601AD7E281754E917478AA9AD48D;
 IL2CPP_EXTERN_C String_t* _stringLiteralF4307BFD60137F4DA5CD5245051B615CC9850496;
@@ -305,6 +328,9 @@ struct CultureInfo_t9BA817D41AD55AC8BD07480DD8AC22F8FFA378E0_marshaled_com
 	Il2CppSafeArray* ___cached_serialized_form;
 	CultureData_tEEFDCF4ECA1BBF6C0C8C94EB3541657245598F9D_marshaled_com* ___m_cultureData;
 	int32_t ___m_isInherited;
+};
+struct MemberInfo_t  : public RuntimeObject
+{
 };
 struct String_t  : public RuntimeObject
 {
@@ -606,6 +632,10 @@ struct RuntimeFieldHandle_t6E4C45B6D2EA12FC99185805A7E77527899B25C5
 {
 	intptr_t ___value;
 };
+struct RuntimeTypeHandle_t332A452B8B6179E4469B69525D0FE82A88030F7B 
+{
+	intptr_t ___value;
+};
 struct SelectEnterEvent_tBA2614C8C25D8794D5804C4F66195D74E64FC5D0  : public UnityEvent_1_t8C99CC340A51BB1718EAC4102D4F90EE78F667F8
 {
 };
@@ -683,6 +713,10 @@ struct ShotData_t76C0D9D7A672D07FFA48E1F713FAB03E08EC3C2D  : public RuntimeObjec
 	int32_t ___accidentalReleases;
 	int32_t ___trackingLosses;
 	String_t* ___notes;
+};
+struct Type_t  : public MemberInfo_t
+{
+	RuntimeTypeHandle_t332A452B8B6179E4469B69525D0FE82A88030F7B ____impl;
 };
 struct UnityAction_1_t6D7C8D94300AACA6B0CFB2228AA5572CFBF0531B  : public MulticastDelegate_t
 {
@@ -1044,6 +1078,16 @@ struct Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C_StaticFields
 {
 	int32_t ___OffsetOfInstanceIDInCPlusPlusObject;
 };
+struct Type_t_StaticFields
+{
+	Binder_t91BFCE95A7057FADF4D8A1A342AFE52872246235* ___s_defaultBinder;
+	Il2CppChar ___Delimiter;
+	TypeU5BU5D_t97234E1129B564EB38B8D85CAC2AD8B5B9522FFB* ___EmptyTypes;
+	RuntimeObject* ___Missing;
+	MemberFilter_tF644F1AE82F611B677CE1964D5A3277DDA21D553* ___FilterAttribute;
+	MemberFilter_tF644F1AE82F611B677CE1964D5A3277DDA21D553* ___FilterName;
+	MemberFilter_tF644F1AE82F611B677CE1964D5A3277DDA21D553* ___FilterNameIgnoreCase;
+};
 struct XRBaseInteractable_t76185BD6DF3BC86B3CDD82E6368C3C7157E39AE4_StaticFields
 {
 	ProfilerMarker_tA256E18DA86EDBC5528CE066FC91C96EE86501AD ___s_ProcessInteractionStrengthMarker;
@@ -1293,6 +1337,7 @@ inline BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* Component_GetCom
 }
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void XRBaseInteractable_OnSelectEntered_m5E8C0AF701A3FD997806A7A5EA6F637BED1C02CB (XRBaseInteractable_t76185BD6DF3BC86B3CDD82E6368C3C7157E39AE4* __this, SelectEnterEventArgs_t9220B1E6A9BB5A847C0476949ACE0182430BB938* ___0_args, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR RuntimeObject* SelectEnterEventArgs_get_interactorObject_mDBBDCE0D498FC768E0EC28C2E862C8FE5B32DE59 (SelectEnterEventArgs_t9220B1E6A9BB5A847C0476949ACE0182430BB938* __this, const RuntimeMethod* method) ;
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Type_t* Object_GetType_mE10A8FC1E57F3DF29972CCBC026C2DC3942263B3 (RuntimeObject* __this, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_StartDraw_mCE48C1E8A665FD06ACEFB1D90CE32D4641B3BE9A (BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* __this, XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4* ___0_hand, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void XRBaseInteractable_OnSelectExited_m2ED47072F75C48ECDE51704F2F799C42083EE8A9 (XRBaseInteractable_t76185BD6DF3BC86B3CDD82E6368C3C7157E39AE4* __this, SelectExitEventArgs_t56125CE0360D37AC0B50EB6066B5AB5957EF559A* ___0_args, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void XRBaseInteractable__ctor_m0BA492AFD3DCFBF74ED2FE4B513644F213CCACBF (XRBaseInteractable_t76185BD6DF3BC86B3CDD82E6368C3C7157E39AE4* __this, const RuntimeMethod* method) ;
@@ -1328,7 +1373,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR float Vector3_get_magnitude_mF0D6
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 98956
+// Method Definition Index: 98936
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* ExperimentLogger_get_FilePath_mDC9D77EE888589F476D70E260DB2488F974C9C51 (ExperimentLogger_tB947FF8FB8CEA71ACC7349AA713B9DBD49BB0A31* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1337,7 +1382,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* ExperimentLogger_get_FilePath_mDC9D
 		return L_0;
 	}
 }
-// Method Definition Index: 98957
+// Method Definition Index: 98937
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentLogger_Awake_mED6C22BB7BD92B93542B5E18EC05370B823A99B4 (ExperimentLogger_tB947FF8FB8CEA71ACC7349AA713B9DBD49BB0A31* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1347,7 +1392,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentLogger_Awake_mED6C22BB7BD92B93
 		return;
 	}
 }
-// Method Definition Index: 98958
+// Method Definition Index: 98938
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentLogger_InitializeLogFile_mEF340FE03974423F7B2D56277F525E78491DC6D8 (ExperimentLogger_tB947FF8FB8CEA71ACC7349AA713B9DBD49BB0A31* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1448,7 +1493,7 @@ IL_007c:
 		return;
 	}
 }
-// Method Definition Index: 98959
+// Method Definition Index: 98939
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentLogger_LogShot_m6F980B7D1923A6636815B9B965ABA0D0FBEDCC81 (ExperimentLogger_tB947FF8FB8CEA71ACC7349AA713B9DBD49BB0A31* __this, ShotData_t76C0D9D7A672D07FFA48E1F713FAB03E08EC3C2D* ___0_data, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1541,7 +1586,7 @@ IL_0021:
 		return;
 	}
 }
-// Method Definition Index: 98960
+// Method Definition Index: 98940
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentLogger__ctor_mE14E4304D7CD73083A149E99D677525FE5811B83 (ExperimentLogger_tB947FF8FB8CEA71ACC7349AA713B9DBD49BB0A31* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1568,7 +1613,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentLogger__ctor_mE14E4304D7CD7308
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 98961
+// Method Definition Index: 98941
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t ExperimentManager_get_CurrentInputMode_m0EDDCCDACA7627DBFDA7D044E63BD197BBF44E6D (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1577,7 +1622,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t ExperimentManager_get_CurrentInputMod
 		return L_0;
 	}
 }
-// Method Definition Index: 98962
+// Method Definition Index: 98942
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t ExperimentManager_get_CurrentShotNumber_mCB8210635D63CDEB9844A145B5BE2B0B651EF591 (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1586,7 +1631,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t ExperimentManager_get_CurrentShotNumb
 		return L_0;
 	}
 }
-// Method Definition Index: 98963
+// Method Definition Index: 98943
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ExperimentManager_get_ShotInProgress_mE04E65E45BD015E90047C4975B3C53E6DAD7C1CF (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1595,7 +1640,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ExperimentManager_get_ShotInProgress_mE0
 		return L_0;
 	}
 }
-// Method Definition Index: 98964
+// Method Definition Index: 98944
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_Awake_m4126AB38E4F4803F420A9ACC72BD8FEADE22B782 (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1630,7 +1675,7 @@ IL_001a:
 		return;
 	}
 }
-// Method Definition Index: 98965
+// Method Definition Index: 98945
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_SetParticipantId_m50D4F7585EC4BABFD501B86A5CD519FB60AB1C47 (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, String_t* ___0_newParticipantId, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1682,7 +1727,7 @@ IL_0016:
 		return;
 	}
 }
-// Method Definition Index: 98966
+// Method Definition Index: 98946
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_SetTargetScoring_m0D5BE16362C19DD62588CC4F2F3D91DDCE1CFFD3 (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, TargetScoring_tC6A87DED1DEA2B9A26E50F59AF7FA1B484EF642E* ___0_newTargetScoring, const RuntimeMethod* method) 
 {
 	{
@@ -1694,7 +1739,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_SetTargetScoring_m0D5B
 		return;
 	}
 }
-// Method Definition Index: 98967
+// Method Definition Index: 98947
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_StartControllerCondition_m9FDA499D2CE52B193BC60334545E9AA18213330F (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1704,7 +1749,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_StartControllerConditi
 		return;
 	}
 }
-// Method Definition Index: 98968
+// Method Definition Index: 98948
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_StartHandTrackingCondition_m875F0D154F8C1D83ED3F245975D004596390067B (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1714,7 +1759,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_StartHandTrackingCondi
 		return;
 	}
 }
-// Method Definition Index: 98969
+// Method Definition Index: 98949
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_StartCondition_mA12380BEFFE867029C65F96205F9A9123AE591C7 (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, int32_t ___0_mode, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1749,7 +1794,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_StartCondition_mA12380
 		return;
 	}
 }
-// Method Definition Index: 98970
+// Method Definition Index: 98950
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_StartShot_m727925941547827C8AEFFAE104C53745E11A150F (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1814,7 +1859,7 @@ IL_0029:
 		return;
 	}
 }
-// Method Definition Index: 98971
+// Method Definition Index: 98951
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_RegisterArrowReleased_mCDF61EA01B82E9E018EC72242414F85FDDD420C8 (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1855,7 +1900,7 @@ IL_0013:
 		return;
 	}
 }
-// Method Definition Index: 98972
+// Method Definition Index: 98952
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_RegisterTargetHit_mBDF8279A05E42211F378AF73158375748126FA3C (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 ___0_hitPoint, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1919,7 +1964,7 @@ IL_003c:
 		return;
 	}
 }
-// Method Definition Index: 98973
+// Method Definition Index: 98953
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_RegisterMiss_mB06A6F15C6B954D88AA425CECEE6D94FF3511949 (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 ___0_hitPoint, String_t* ___1_reason, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1962,7 +2007,7 @@ IL_0021:
 		return;
 	}
 }
-// Method Definition Index: 98974
+// Method Definition Index: 98954
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_RegisterFailedGrab_m24B07DBB1223222537CE4A17340707896538D15A (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1973,7 +2018,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_RegisterFailedGrab_m24
 		return;
 	}
 }
-// Method Definition Index: 98975
+// Method Definition Index: 98955
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_RegisterAccidentalRelease_m901C651EAD047778B2B5FD840D53F5F4B81B336D (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1984,7 +2029,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_RegisterAccidentalRele
 		return;
 	}
 }
-// Method Definition Index: 98976
+// Method Definition Index: 98956
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_RegisterTrackingLoss_m15BA3BE6C3C8D1E5EBEFD5B69314B8719CD88D90 (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1995,7 +2040,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_RegisterTrackingLoss_m
 		return;
 	}
 }
-// Method Definition Index: 98977
+// Method Definition Index: 98957
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_FinishShot_m94508F0497267A00FB9D328801EA77F2F56863D7 (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, bool ___0_hit, int32_t ___1_score, float ___2_distanceFromCenter, String_t* ___3_notes, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2176,7 +2221,7 @@ IL_0104:
 		return;
 	}
 }
-// Method Definition Index: 98978
+// Method Definition Index: 98958
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_ResetErrorCounters_mBB4A1DFDC6F10EC864B27C08AAF82F585340ABAE (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	{
@@ -2190,7 +2235,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager_ResetErrorCounters_mBB
 		return;
 	}
 }
-// Method Definition Index: 98979
+// Method Definition Index: 98959
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager__ctor_m108FF88BCF3A3F03CC2BA309AAB787669C0806D6 (ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2227,7 +2272,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ExperimentManager__ctor_m108FF88BCF3A3F0
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 98980
+// Method Definition Index: 98960
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* ShotData_CsvHeader_m4C767559F6749DCF7A0FBFE8344E46AEA5442945 (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2241,7 +2286,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* ShotData_CsvHeader_m4C767559F6749DC
 		return _stringLiteralF97C9ACFE5CA37DF2C36B5243F72D0C130119997;
 	}
 }
-// Method Definition Index: 98981
+// Method Definition Index: 98961
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* ShotData_ToCsvLine_mC30552C24B0E44D7C997FBEB99AF1184A2F813D6 (ShotData_t76C0D9D7A672D07FFA48E1F713FAB03E08EC3C2D* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2375,7 +2420,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* ShotData_ToCsvLine_mC30552C24B0E44D
 		return L_47;
 	}
 }
-// Method Definition Index: 98982
+// Method Definition Index: 98962
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* ShotData_Escape_mF7B5D13F38EBB55C46E52231F96BA4E1326D12B4 (String_t* ___0_value, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2468,7 +2513,7 @@ IL_004b:
 		return L_12;
 	}
 }
-// Method Definition Index: 98983
+// Method Definition Index: 98963
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ShotData__ctor_m806C8C07FE6EB54925247F82F8F8B9B7701E05F5 (ShotData_t76C0D9D7A672D07FFA48E1F713FAB03E08EC3C2D* __this, const RuntimeMethod* method) 
 {
 	{
@@ -2484,7 +2529,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ShotData__ctor_m806C8C07FE6EB54925247F82
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 98984
+// Method Definition Index: 98964
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge_OnShotStarted_m74F7EA69C4BACEB7562F4354C5A81F38129D7300 (ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32* __this, const RuntimeMethod* method) 
 {
 	ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* G_B2_0 = NULL;
@@ -2512,7 +2557,7 @@ IL_000b:
 		return;
 	}
 }
-// Method Definition Index: 98985
+// Method Definition Index: 98965
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge_OnArrowReleased_m14B6EA4299C636EE8F4BF5B92BB70A8D63EF9483 (ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32* __this, const RuntimeMethod* method) 
 {
 	ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* G_B2_0 = NULL;
@@ -2540,7 +2585,7 @@ IL_000b:
 		return;
 	}
 }
-// Method Definition Index: 98986
+// Method Definition Index: 98966
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge_OnArrowHitTarget_m82A9A97BC32E31682C008706ABFAA38B3193742A (ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32* __this, Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 ___0_hitPoint, const RuntimeMethod* method) 
 {
 	ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* G_B2_0 = NULL;
@@ -2569,7 +2614,7 @@ IL_000b:
 		return;
 	}
 }
-// Method Definition Index: 98987
+// Method Definition Index: 98967
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge_OnArrowMissed_m74D525667829405AB9F394898629D17C5B2D609D (ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32* __this, Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 ___0_hitPoint, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2604,7 +2649,7 @@ IL_000b:
 		return;
 	}
 }
-// Method Definition Index: 98988
+// Method Definition Index: 98968
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge_OnFailedGrab_mC881F8A873F772F51AB684EBE6367281D09E8EE7 (ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32* __this, const RuntimeMethod* method) 
 {
 	ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* G_B2_0 = NULL;
@@ -2632,7 +2677,7 @@ IL_000b:
 		return;
 	}
 }
-// Method Definition Index: 98989
+// Method Definition Index: 98969
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge_OnAccidentalRelease_m59CAAF977EA4C33BB186BCD8F75ADFEDF9DFFA8C (ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32* __this, const RuntimeMethod* method) 
 {
 	ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* G_B2_0 = NULL;
@@ -2660,7 +2705,7 @@ IL_000b:
 		return;
 	}
 }
-// Method Definition Index: 98990
+// Method Definition Index: 98970
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge_OnTrackingLost_mC1676817AE821F0895479608B23D3A07FB811C50 (ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32* __this, const RuntimeMethod* method) 
 {
 	ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* G_B2_0 = NULL;
@@ -2688,7 +2733,7 @@ IL_000b:
 		return;
 	}
 }
-// Method Definition Index: 98991
+// Method Definition Index: 98971
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge_StartControllerCondition_m6FEF2ABB58A36465126532FB27D54DD37BDA346A (ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32* __this, const RuntimeMethod* method) 
 {
 	ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* G_B2_0 = NULL;
@@ -2716,7 +2761,7 @@ IL_000b:
 		return;
 	}
 }
-// Method Definition Index: 98992
+// Method Definition Index: 98972
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge_StartHandTrackingCondition_mFC8981922B815B8A1F0B5ADF15BDB68457A85B17 (ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32* __this, const RuntimeMethod* method) 
 {
 	ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* G_B2_0 = NULL;
@@ -2744,7 +2789,7 @@ IL_000b:
 		return;
 	}
 }
-// Method Definition Index: 98993
+// Method Definition Index: 98973
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge__ctor_mD4E8B80ADF1DAE1633B6707D5E6D2840FDE55685 (ArcheryEventBridge_t341EE21B29044590C4E74BACC407E268A0384F32* __this, const RuntimeMethod* method) 
 {
 	{
@@ -2760,7 +2805,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArcheryEventBridge__ctor_mD4E8B80ADF1DAE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 98994
+// Method Definition Index: 98974
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowController_Awake_mFC50EE4268C356D6F64003E60732E8844B40D0E8 (ArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2779,7 +2824,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowController_Awake_mFC50EE4268C356D6F
 		return;
 	}
 }
-// Method Definition Index: 98995
+// Method Definition Index: 98975
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowController_Update_mB808269BD56B06975A3729674F769683BCCEDAB6 (ArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700* __this, const RuntimeMethod* method) 
 {
 	Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 V_0;
@@ -2832,7 +2877,7 @@ IL_0045:
 		return;
 	}
 }
-// Method Definition Index: 98996
+// Method Definition Index: 98976
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowController_SetNocked_m0F4B664076F21F4CDCA2DB67F86D2196819248CE (ArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700* __this, bool ___0_nocked, const RuntimeMethod* method) 
 {
 	{
@@ -2847,7 +2892,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowController_SetNocked_m0F4B664076F21
 		return;
 	}
 }
-// Method Definition Index: 98997
+// Method Definition Index: 98977
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowController_Launch_mCDC0F7B60B43202A6E13F674566B3D4441FC4DE9 (ArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700* __this, Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 ___0_direction, const RuntimeMethod* method) 
 {
 	{
@@ -2867,7 +2912,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowController_Launch_mCDC0F7B60B43202A
 		return;
 	}
 }
-// Method Definition Index: 98998
+// Method Definition Index: 98978
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowController_OnCollisionEnter_mA6615E4422A65060659C0CC609735FDB875EA642 (ArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700* __this, Collision_tBCC6AEBD9A63E6DA2E50660DAC03CDCB1FF7A9B0* ___0_collision, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2938,7 +2983,7 @@ IL_005f:
 		return;
 	}
 }
-// Method Definition Index: 98999
+// Method Definition Index: 98979
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowController__ctor_m5363B3666D1BBC8ACB329EE770C93ED8D030DD98 (ArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700* __this, const RuntimeMethod* method) 
 {
 	{
@@ -2954,7 +2999,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowController__ctor_m5363B3666D1BBC8AC
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 99000
+// Method Definition Index: 98980
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_Awake_m70660E2C9442AE496BB1FC24AE93E7CED6D53C4B (BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2970,12 +3015,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_Awake_m70660E2C9442AE496BB
 		s_Il2CppMethodInitialized = true;
 	}
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:24>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:25>
 		XRGrabInteractable_tAE7E2F24377399C9B5159179E4B43EA6AA55531B* L_0;
 		L_0 = Component_GetComponent_TisXRGrabInteractable_tAE7E2F24377399C9B5159179E4B43EA6AA55531B_m49377F1D0DBAB9BDC59DFC6851E9A5D687717C14(__this, Component_GetComponent_TisXRGrabInteractable_tAE7E2F24377399C9B5159179E4B43EA6AA55531B_m49377F1D0DBAB9BDC59DFC6851E9A5D687717C14_RuntimeMethod_var);
 		__this->___bowGrab = L_0;
 		Il2CppCodeGenWriteBarrier((void**)(&__this->___bowGrab), (void*)L_0);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:25>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:26>
 		XRGrabInteractable_tAE7E2F24377399C9B5159179E4B43EA6AA55531B* L_1 = __this->___bowGrab;
 		NullCheck(L_1);
 		SelectEnterEvent_tBA2614C8C25D8794D5804C4F66195D74E64FC5D0* L_2;
@@ -2984,7 +3029,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_Awake_m70660E2C9442AE496BB
 		UnityAction_1__ctor_mEE39E1A87376378311B4931978E8E07E589E9A24(L_3, __this, (intptr_t)((void*)BowController_OnBowGrabbed_m49C25921819D39DB67E06FABAC9759D7225FF505_RuntimeMethod_var), NULL);
 		NullCheck(L_2);
 		UnityEvent_1_AddListener_mAE71681FB0832FD7DBA813E5ADDBA574EA32EED2(L_2, L_3, UnityEvent_1_AddListener_mAE71681FB0832FD7DBA813E5ADDBA574EA32EED2_RuntimeMethod_var);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:26>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:27>
 		XRGrabInteractable_tAE7E2F24377399C9B5159179E4B43EA6AA55531B* L_4 = __this->___bowGrab;
 		NullCheck(L_4);
 		SelectExitEvent_t15DC0A39F9657BA9E6BAE6250D8D64C9671201F6* L_5;
@@ -2993,11 +3038,11 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_Awake_m70660E2C9442AE496BB
 		UnityAction_1__ctor_mD74501F5FCCC37863163D5E7155B6C8B9B366C40(L_6, __this, (intptr_t)((void*)BowController_OnBowReleased_mDA0C2E9E0FEAF15577B2CB67051965BD0E743052_RuntimeMethod_var), NULL);
 		NullCheck(L_5);
 		UnityEvent_1_AddListener_mB662756036996A6B6F83F6492CE9E26797AF9602(L_5, L_6, UnityEvent_1_AddListener_mB662756036996A6B6F83F6492CE9E26797AF9602_RuntimeMethod_var);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:27>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:28>
 		return;
 	}
 }
-// Method Definition Index: 99001
+// Method Definition Index: 98981
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_Update_m73BB757AFEF1144CB957D7ABC075992764D3EA35 (BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3012,7 +3057,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_Update_m73BB757AFEF1144CB9
 	Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 V_2;
 	memset((&V_2), 0, sizeof(V_2));
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:31>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:32>
 		bool L_0 = __this->___isDrawing;
 		if (!L_0)
 		{
@@ -3032,13 +3077,13 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_Update_m73BB757AFEF1144CB9
 
 IL_0016:
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:31>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:32>
 		return;
 	}
 
 IL_0017:
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:34>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:35>
 		XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4* L_3 = __this->___drawHand;
 		NullCheck(L_3);
 		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_4;
@@ -3053,13 +3098,13 @@ IL_0017:
 		float L_8;
 		L_8 = Vector3_Distance_m2314DB9B8BD01157E013DF87BEA557375C7F9FF9_inline(L_5, L_7, NULL);
 		V_0 = L_8;
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:35>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:36>
 		float L_9 = V_0;
 		float L_10 = __this->___maxDrawDistance;
 		float L_11;
 		L_11 = Mathf_Clamp01_mA7E048DBDA832D399A581BE4D6DED9FA44CE0F14_inline(((float)(L_9/L_10)), NULL);
 		__this->___drawAmount = L_11;
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:38>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:39>
 		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_12 = __this->___currentArrow;
 		il2cpp_codegen_runtime_class_init_inline(Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C_il2cpp_TypeInfo_var);
 		bool L_13;
@@ -3070,7 +3115,7 @@ IL_0017:
 		}
 	}
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:40>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:41>
 		XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4* L_14 = __this->___drawHand;
 		NullCheck(L_14);
 		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_15;
@@ -3088,7 +3133,7 @@ IL_0017:
 		Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 L_20;
 		L_20 = Vector3_get_normalized_m736BBF65D5CDA7A18414370D15B4DFCC1E466F07_inline((&V_2), NULL);
 		V_1 = L_20;
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:41>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:42>
 		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_21 = __this->___nockPoint;
 		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_22 = __this->___stringAnchor;
 		NullCheck(L_22);
@@ -3103,7 +3148,7 @@ IL_0017:
 		L_28 = Vector3_op_Addition_m78C0EC70CB66E8DCAC225743D82B268DAEE92067_inline(L_23, L_27, NULL);
 		NullCheck(L_21);
 		Transform_set_position_mA1A817124BB41B685043DED2A9BA48CDF37C4156(L_21, L_28, NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:42>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:43>
 		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_29 = __this->___currentArrow;
 		NullCheck(L_29);
 		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_30;
@@ -3114,7 +3159,7 @@ IL_0017:
 		L_32 = Transform_get_position_m69CD5FA214FDAE7BB701552943674846C220FDE1(L_31, NULL);
 		NullCheck(L_30);
 		Transform_set_position_mA1A817124BB41B685043DED2A9BA48CDF37C4156(L_30, L_32, NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:43>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:44>
 		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_33 = __this->___currentArrow;
 		NullCheck(L_33);
 		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_34;
@@ -3137,77 +3182,132 @@ IL_0017:
 
 IL_00fe:
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:45>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:46>
 		return;
 	}
 }
-// Method Definition Index: 99002
+// Method Definition Index: 98982
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_StartDraw_mCE48C1E8A665FD06ACEFB1D90CE32D4641B3BE9A (BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* __this, XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4* ___0_hand, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
 	if (!s_Il2CppMethodInitialized)
 	{
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&Debug_t8394C7EEAECA3689C2C9B9DE9C7166D73596276F_il2cpp_TypeInfo_var);
 		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&GameObject_GetComponent_TisArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700_m33E0101BB416D3C369F24AD2051F459AE47DA785_RuntimeMethod_var);
 		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&GameObject_GetComponent_TisRigidbody_t268697F5A994213ED97393309870968BC1C7393C_m2D7F86C77ECF9B82AAC077B511F1004280571B90_RuntimeMethod_var);
 		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&Object_Instantiate_TisGameObject_t76FEDD663AB33C991A9C9A23129337651094216F_m831D2F71DF2AA6C93AFDFEFA04CF2CFC5FBBCDB4_RuntimeMethod_var);
 		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C_il2cpp_TypeInfo_var);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&_stringLiteral4233D0CFF92FB031104122117F774213A888737F);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&_stringLiteral456FB2B4315E07211FDC84271FA5B8F0D51D5BEA);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&_stringLiteral695711123D9386B827993F07EA0EF508A7C5C492);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&_stringLiteralC719813EBF2B60985C8D1F4A78AD78E33939CB26);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&_stringLiteralDB8B900F135E4FF540B1C0C8EF1A90D95C24F03A);
 		s_Il2CppMethodInitialized = true;
 	}
+	bool V_0 = false;
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:50>
-		bool L_0 = __this->___isDrawing;
-		if (!L_0)
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:51>
+		XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4* L_0 = ___0_hand;
+		il2cpp_codegen_runtime_class_init_inline(Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C_il2cpp_TypeInfo_var);
+		bool L_1;
+		L_1 = Object_op_Inequality_mD0BE578448EAA61948F25C32F8DD55AB1F778602(L_0, (Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C*)NULL, NULL);
+		V_0 = L_1;
+		il2cpp_codegen_runtime_class_init_inline(il2cpp_defaults.boolean_class);
+		String_t* L_2;
+		L_2 = Boolean_ToString_m6646C8026B1DF381A1EE8CD13549175E9703CC63((&V_0), NULL);
+		bool* L_3 = (bool*)(&__this->___isDrawing);
+		String_t* L_4;
+		L_4 = Boolean_ToString_m6646C8026B1DF381A1EE8CD13549175E9703CC63(L_3, NULL);
+		String_t* L_5;
+		L_5 = String_Concat_m093934F71A9B351911EE46311674ED463B180006(_stringLiteralC719813EBF2B60985C8D1F4A78AD78E33939CB26, L_2, _stringLiteral4233D0CFF92FB031104122117F774213A888737F, L_4, NULL);
+		il2cpp_codegen_runtime_class_init_inline(Debug_t8394C7EEAECA3689C2C9B9DE9C7166D73596276F_il2cpp_TypeInfo_var);
+		Debug_Log_m87A9A3C761FF5C43ED8A53B16190A53D08F818BB(L_5, NULL);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:53>
+		bool L_6 = __this->___isDrawing;
+		if (!L_6)
 		{
-			goto IL_0009;
+			goto IL_0037;
 		}
 	}
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:50>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:53>
 		return;
 	}
 
-IL_0009:
+IL_0037:
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:51>
-		XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4* L_1 = ___0_hand;
-		__this->___drawHand = L_1;
-		Il2CppCodeGenWriteBarrier((void**)(&__this->___drawHand), (void*)L_1);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:52>
-		__this->___isDrawing = (bool)1;
 		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:55>
-		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_2 = __this->___arrowPrefab;
-		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_3 = __this->___nockPoint;
-		NullCheck(L_3);
-		Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 L_4;
-		L_4 = Transform_get_position_m69CD5FA214FDAE7BB701552943674846C220FDE1(L_3, NULL);
-		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_5 = __this->___nockPoint;
-		NullCheck(L_5);
-		Quaternion_tDA59F214EF07D7700B26E40E562F267AF7306974 L_6;
-		L_6 = Transform_get_rotation_m32AF40CA0D50C797DA639A696F8EAEC7524C179C(L_5, NULL);
-		il2cpp_codegen_runtime_class_init_inline(Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C_il2cpp_TypeInfo_var);
-		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_7;
-		L_7 = Object_Instantiate_TisGameObject_t76FEDD663AB33C991A9C9A23129337651094216F_m831D2F71DF2AA6C93AFDFEFA04CF2CFC5FBBCDB4(L_2, L_4, L_6, Object_Instantiate_TisGameObject_t76FEDD663AB33C991A9C9A23129337651094216F_m831D2F71DF2AA6C93AFDFEFA04CF2CFC5FBBCDB4_RuntimeMethod_var);
-		__this->___currentArrow = L_7;
-		Il2CppCodeGenWriteBarrier((void**)(&__this->___currentArrow), (void*)L_7);
+		XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4* L_7 = ___0_hand;
+		__this->___drawHand = L_7;
+		Il2CppCodeGenWriteBarrier((void**)(&__this->___drawHand), (void*)L_7);
 		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:56>
-		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_8 = __this->___currentArrow;
-		NullCheck(L_8);
-		Rigidbody_t268697F5A994213ED97393309870968BC1C7393C* L_9;
-		L_9 = GameObject_GetComponent_TisRigidbody_t268697F5A994213ED97393309870968BC1C7393C_m2D7F86C77ECF9B82AAC077B511F1004280571B90(L_8, GameObject_GetComponent_TisRigidbody_t268697F5A994213ED97393309870968BC1C7393C_m2D7F86C77ECF9B82AAC077B511F1004280571B90_RuntimeMethod_var);
-		NullCheck(L_9);
-		Rigidbody_set_isKinematic_m6C3FD3EA358DADA3B191F2449CF1C4F8B22695ED(L_9, (bool)1, NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:57>
-		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_10 = __this->___currentArrow;
-		NullCheck(L_10);
-		ArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700* L_11;
-		L_11 = GameObject_GetComponent_TisArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700_m33E0101BB416D3C369F24AD2051F459AE47DA785(L_10, GameObject_GetComponent_TisArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700_m33E0101BB416D3C369F24AD2051F459AE47DA785_RuntimeMethod_var);
-		NullCheck(L_11);
-		ArrowController_SetNocked_m0F4B664076F21F4CDCA2DB67F86D2196819248CE(L_11, (bool)1, NULL);
+		__this->___isDrawing = (bool)1;
 		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:58>
+		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_8 = __this->___arrowPrefab;
+		il2cpp_codegen_runtime_class_init_inline(Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C_il2cpp_TypeInfo_var);
+		bool L_9;
+		L_9 = Object_op_Inequality_mD0BE578448EAA61948F25C32F8DD55AB1F778602(L_8, (Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C*)NULL, NULL);
+		V_0 = L_9;
+		il2cpp_codegen_runtime_class_init_inline(il2cpp_defaults.boolean_class);
+		String_t* L_10;
+		L_10 = Boolean_ToString_m6646C8026B1DF381A1EE8CD13549175E9703CC63((&V_0), NULL);
+		String_t* L_11;
+		L_11 = String_Concat_m9E3155FB84015C823606188F53B47CB44C444991(_stringLiteral695711123D9386B827993F07EA0EF508A7C5C492, L_10, NULL);
+		il2cpp_codegen_runtime_class_init_inline(Debug_t8394C7EEAECA3689C2C9B9DE9C7166D73596276F_il2cpp_TypeInfo_var);
+		Debug_Log_m87A9A3C761FF5C43ED8A53B16190A53D08F818BB(L_11, NULL);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:59>
+		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_12 = __this->___nockPoint;
+		bool L_13;
+		L_13 = Object_op_Inequality_mD0BE578448EAA61948F25C32F8DD55AB1F778602(L_12, (Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C*)NULL, NULL);
+		V_0 = L_13;
+		String_t* L_14;
+		L_14 = Boolean_ToString_m6646C8026B1DF381A1EE8CD13549175E9703CC63((&V_0), NULL);
+		String_t* L_15;
+		L_15 = String_Concat_m9E3155FB84015C823606188F53B47CB44C444991(_stringLiteralDB8B900F135E4FF540B1C0C8EF1A90D95C24F03A, L_14, NULL);
+		Debug_Log_m87A9A3C761FF5C43ED8A53B16190A53D08F818BB(L_15, NULL);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:61>
+		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_16 = __this->___arrowPrefab;
+		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_17 = __this->___nockPoint;
+		NullCheck(L_17);
+		Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 L_18;
+		L_18 = Transform_get_position_m69CD5FA214FDAE7BB701552943674846C220FDE1(L_17, NULL);
+		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_19 = __this->___nockPoint;
+		NullCheck(L_19);
+		Quaternion_tDA59F214EF07D7700B26E40E562F267AF7306974 L_20;
+		L_20 = Transform_get_rotation_m32AF40CA0D50C797DA639A696F8EAEC7524C179C(L_19, NULL);
+		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_21;
+		L_21 = Object_Instantiate_TisGameObject_t76FEDD663AB33C991A9C9A23129337651094216F_m831D2F71DF2AA6C93AFDFEFA04CF2CFC5FBBCDB4(L_16, L_18, L_20, Object_Instantiate_TisGameObject_t76FEDD663AB33C991A9C9A23129337651094216F_m831D2F71DF2AA6C93AFDFEFA04CF2CFC5FBBCDB4_RuntimeMethod_var);
+		__this->___currentArrow = L_21;
+		Il2CppCodeGenWriteBarrier((void**)(&__this->___currentArrow), (void*)L_21);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:62>
+		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_22 = __this->___currentArrow;
+		NullCheck(L_22);
+		Rigidbody_t268697F5A994213ED97393309870968BC1C7393C* L_23;
+		L_23 = GameObject_GetComponent_TisRigidbody_t268697F5A994213ED97393309870968BC1C7393C_m2D7F86C77ECF9B82AAC077B511F1004280571B90(L_22, GameObject_GetComponent_TisRigidbody_t268697F5A994213ED97393309870968BC1C7393C_m2D7F86C77ECF9B82AAC077B511F1004280571B90_RuntimeMethod_var);
+		NullCheck(L_23);
+		Rigidbody_set_isKinematic_m6C3FD3EA358DADA3B191F2449CF1C4F8B22695ED(L_23, (bool)1, NULL);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:63>
+		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_24 = __this->___currentArrow;
+		NullCheck(L_24);
+		ArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700* L_25;
+		L_25 = GameObject_GetComponent_TisArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700_m33E0101BB416D3C369F24AD2051F459AE47DA785(L_24, GameObject_GetComponent_TisArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700_m33E0101BB416D3C369F24AD2051F459AE47DA785_RuntimeMethod_var);
+		NullCheck(L_25);
+		ArrowController_SetNocked_m0F4B664076F21F4CDCA2DB67F86D2196819248CE(L_25, (bool)1, NULL);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:65>
+		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_26 = __this->___currentArrow;
+		bool L_27;
+		L_27 = Object_op_Inequality_mD0BE578448EAA61948F25C32F8DD55AB1F778602(L_26, (Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C*)NULL, NULL);
+		V_0 = L_27;
+		String_t* L_28;
+		L_28 = Boolean_ToString_m6646C8026B1DF381A1EE8CD13549175E9703CC63((&V_0), NULL);
+		String_t* L_29;
+		L_29 = String_Concat_m9E3155FB84015C823606188F53B47CB44C444991(_stringLiteral456FB2B4315E07211FDC84271FA5B8F0D51D5BEA, L_28, NULL);
+		Debug_Log_m87A9A3C761FF5C43ED8A53B16190A53D08F818BB(L_29, NULL);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:66>
 		return;
 	}
 }
-// Method Definition Index: 99003
+// Method Definition Index: 98983
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_Release_mF35C7D11EA57C31653390B923152164E0DFF8261 (BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3224,7 +3324,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_Release_mF35C7D11EA57C3165
 	Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 V_2;
 	memset((&V_2), 0, sizeof(V_2));
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:62>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:70>
 		bool L_0 = __this->___isDrawing;
 		if (!L_0)
 		{
@@ -3244,15 +3344,15 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_Release_mF35C7D11EA57C3165
 
 IL_0016:
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:62>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:70>
 		return;
 	}
 
 IL_0017:
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:64>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:72>
 		__this->___isDrawing = (bool)0;
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:67>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:75>
 		Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* L_3 = __this->___stringAnchor;
 		NullCheck(L_3);
 		Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 L_4;
@@ -3267,27 +3367,27 @@ IL_0017:
 		Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 L_8;
 		L_8 = Vector3_get_normalized_m736BBF65D5CDA7A18414370D15B4DFCC1E466F07_inline((&V_2), NULL);
 		V_0 = L_8;
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:68>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:76>
 		float L_9 = __this->___drawAmount;
 		float L_10 = __this->___maxLaunchForce;
 		V_1 = ((float)il2cpp_codegen_multiply(L_9, L_10));
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:71>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:79>
 		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_11 = __this->___currentArrow;
 		NullCheck(L_11);
 		Rigidbody_t268697F5A994213ED97393309870968BC1C7393C* L_12;
 		L_12 = GameObject_GetComponent_TisRigidbody_t268697F5A994213ED97393309870968BC1C7393C_m2D7F86C77ECF9B82AAC077B511F1004280571B90(L_11, GameObject_GetComponent_TisRigidbody_t268697F5A994213ED97393309870968BC1C7393C_m2D7F86C77ECF9B82AAC077B511F1004280571B90_RuntimeMethod_var);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:72>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:80>
 		Rigidbody_t268697F5A994213ED97393309870968BC1C7393C* L_13 = L_12;
 		NullCheck(L_13);
 		Rigidbody_set_isKinematic_m6C3FD3EA358DADA3B191F2449CF1C4F8B22695ED(L_13, (bool)0, NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:73>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:81>
 		Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 L_14 = V_0;
 		float L_15 = V_1;
 		Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 L_16;
 		L_16 = Vector3_op_Multiply_m87BA7C578F96C8E49BB07088DAAC4649F83B0353_inline(L_14, L_15, NULL);
 		NullCheck(L_13);
 		Rigidbody_set_linearVelocity_m29AE03D5FC079EAD4202FCF72E2AEBDC19363985(L_13, L_16, NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:75>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:83>
 		GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* L_17 = __this->___currentArrow;
 		NullCheck(L_17);
 		ArrowController_t45F36E05E764DB552B07F9499E85BF432EC9E700* L_18;
@@ -3295,43 +3395,43 @@ IL_0017:
 		Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 L_19 = V_0;
 		NullCheck(L_18);
 		ArrowController_Launch_mCDC0F7B60B43202A6E13F674566B3D4441FC4DE9(L_18, L_19, NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:76>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:84>
 		__this->___currentArrow = (GameObject_t76FEDD663AB33C991A9C9A23129337651094216F*)NULL;
 		Il2CppCodeGenWriteBarrier((void**)(&__this->___currentArrow), (void*)(GameObject_t76FEDD663AB33C991A9C9A23129337651094216F*)NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:77>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:85>
 		__this->___drawHand = (XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4*)NULL;
 		Il2CppCodeGenWriteBarrier((void**)(&__this->___drawHand), (void*)(XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4*)NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:78>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:86>
 		__this->___drawAmount = (0.0f);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:79>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:87>
 		return;
 	}
 }
-// Method Definition Index: 99004
+// Method Definition Index: 98984
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_OnBowGrabbed_m49C25921819D39DB67E06FABAC9759D7225FF505 (BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* __this, SelectEnterEventArgs_t9220B1E6A9BB5A847C0476949ACE0182430BB938* ___0_args, const RuntimeMethod* method) 
 {
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:81>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:89>
 		return;
 	}
 }
-// Method Definition Index: 99005
+// Method Definition Index: 98985
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController_OnBowReleased_mDA0C2E9E0FEAF15577B2CB67051965BD0E743052 (BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* __this, SelectExitEventArgs_t56125CE0360D37AC0B50EB6066B5AB5957EF559A* ___0_args, const RuntimeMethod* method) 
 {
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:84>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:92>
 		BowController_Release_mF35C7D11EA57C31653390B923152164E0DFF8261(__this, NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:85>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:93>
 		return;
 	}
 }
-// Method Definition Index: 99006
+// Method Definition Index: 98986
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController__ctor_m496828905D0B531EA3DFD465B63848E6F9E52B90 (BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* __this, const RuntimeMethod* method) 
 {
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:12>
-		__this->___maxDrawDistance = (0.5f);
 		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:13>
+		__this->___maxDrawDistance = (0.5f);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/BowController.cs:14>
 		__this->___maxLaunchForce = (30.0f);
 		MonoBehaviour__ctor_m592DB0105CA0BC97AA1C5F4AD27B12D68A3B7C1E(__this, NULL);
 		return;
@@ -3345,32 +3445,51 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void BowController__ctor_m496828905D0B531EA3D
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 99007
+// Method Definition Index: 98987
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void DrawInteractable_Awake_mA967EDE23FE3062E0FCAC29FE3B9F0963C9BADFF (DrawInteractable_t3E70C7457D98DC1A97B3C85D4F9D169D4C941B30* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
 	if (!s_Il2CppMethodInitialized)
 	{
 		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&Component_GetComponentInParent_TisBowController_tAF7278C12099EFA4B37604A8B051849671F5C653_mA2046FFD2F2EE21D3F0725DCA99B2E03541A70C2_RuntimeMethod_var);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&Debug_t8394C7EEAECA3689C2C9B9DE9C7166D73596276F_il2cpp_TypeInfo_var);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C_il2cpp_TypeInfo_var);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&_stringLiteralEE54B9267EF77EDDC81C833347FA75BC10D802A8);
 		s_Il2CppMethodInitialized = true;
 	}
+	bool V_0 = false;
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:13>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:12>
 		BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* L_0;
 		L_0 = Component_GetComponentInParent_TisBowController_tAF7278C12099EFA4B37604A8B051849671F5C653_mA2046FFD2F2EE21D3F0725DCA99B2E03541A70C2(__this, Component_GetComponentInParent_TisBowController_tAF7278C12099EFA4B37604A8B051849671F5C653_mA2046FFD2F2EE21D3F0725DCA99B2E03541A70C2_RuntimeMethod_var);
 		__this->___bow = L_0;
 		Il2CppCodeGenWriteBarrier((void**)(&__this->___bow), (void*)L_0);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:13>
+		BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* L_1 = __this->___bow;
+		il2cpp_codegen_runtime_class_init_inline(Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C_il2cpp_TypeInfo_var);
+		bool L_2;
+		L_2 = Object_op_Inequality_mD0BE578448EAA61948F25C32F8DD55AB1F778602(L_1, (Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C*)NULL, NULL);
+		V_0 = L_2;
+		il2cpp_codegen_runtime_class_init_inline(il2cpp_defaults.boolean_class);
+		String_t* L_3;
+		L_3 = Boolean_ToString_m6646C8026B1DF381A1EE8CD13549175E9703CC63((&V_0), NULL);
+		String_t* L_4;
+		L_4 = String_Concat_m9E3155FB84015C823606188F53B47CB44C444991(_stringLiteralEE54B9267EF77EDDC81C833347FA75BC10D802A8, L_3, NULL);
+		il2cpp_codegen_runtime_class_init_inline(Debug_t8394C7EEAECA3689C2C9B9DE9C7166D73596276F_il2cpp_TypeInfo_var);
+		Debug_Log_m87A9A3C761FF5C43ED8A53B16190A53D08F818BB(L_4, NULL);
 		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:14>
 		return;
 	}
 }
-// Method Definition Index: 99008
+// Method Definition Index: 98988
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void DrawInteractable_OnSelectEntered_m2BE4725C45F2C8B0C21643AA52913400791C2CBE (DrawInteractable_t3E70C7457D98DC1A97B3C85D4F9D169D4C941B30* __this, SelectEnterEventArgs_t9220B1E6A9BB5A847C0476949ACE0182430BB938* ___0_args, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
 	if (!s_Il2CppMethodInitialized)
 	{
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&Debug_t8394C7EEAECA3689C2C9B9DE9C7166D73596276F_il2cpp_TypeInfo_var);
 		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4_il2cpp_TypeInfo_var);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&_stringLiteral4D3111965DDB11D6A0B7E19DDE4166C37BB3ED51);
 		s_Il2CppMethodInitialized = true;
 	}
 	{
@@ -3378,33 +3497,58 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void DrawInteractable_OnSelectEntered_m2BE472
 		SelectEnterEventArgs_t9220B1E6A9BB5A847C0476949ACE0182430BB938* L_0 = ___0_args;
 		XRBaseInteractable_OnSelectEntered_m5E8C0AF701A3FD997806A7A5EA6F637BED1C02CB(__this, L_0, NULL);
 		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:19>
-		BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* L_1 = __this->___bow;
-		SelectEnterEventArgs_t9220B1E6A9BB5A847C0476949ACE0182430BB938* L_2 = ___0_args;
-		NullCheck(L_2);
-		RuntimeObject* L_3;
-		L_3 = SelectEnterEventArgs_get_interactorObject_mDBBDCE0D498FC768E0EC28C2E862C8FE5B32DE59(L_2, NULL);
+		SelectEnterEventArgs_t9220B1E6A9BB5A847C0476949ACE0182430BB938* L_1 = ___0_args;
 		NullCheck(L_1);
-		BowController_StartDraw_mCE48C1E8A665FD06ACEFB1D90CE32D4641B3BE9A(L_1, ((XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4*)IsInstClass((RuntimeObject*)L_3, XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4_il2cpp_TypeInfo_var)), NULL);
+		RuntimeObject* L_2;
+		L_2 = SelectEnterEventArgs_get_interactorObject_mDBBDCE0D498FC768E0EC28C2E862C8FE5B32DE59(L_1, NULL);
+		NullCheck(L_2);
+		Type_t* L_3;
+		L_3 = Object_GetType_mE10A8FC1E57F3DF29972CCBC026C2DC3942263B3(L_2, NULL);
+		NullCheck(L_3);
+		String_t* L_4;
+		L_4 = VirtualFuncInvoker0< String_t* >::Invoke(7, L_3);
+		String_t* L_5;
+		L_5 = String_Concat_m9E3155FB84015C823606188F53B47CB44C444991(_stringLiteral4D3111965DDB11D6A0B7E19DDE4166C37BB3ED51, L_4, NULL);
+		il2cpp_codegen_runtime_class_init_inline(Debug_t8394C7EEAECA3689C2C9B9DE9C7166D73596276F_il2cpp_TypeInfo_var);
+		Debug_Log_m87A9A3C761FF5C43ED8A53B16190A53D08F818BB(L_5, NULL);
 		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:20>
+		BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* L_6 = __this->___bow;
+		SelectEnterEventArgs_t9220B1E6A9BB5A847C0476949ACE0182430BB938* L_7 = ___0_args;
+		NullCheck(L_7);
+		RuntimeObject* L_8;
+		L_8 = SelectEnterEventArgs_get_interactorObject_mDBBDCE0D498FC768E0EC28C2E862C8FE5B32DE59(L_7, NULL);
+		NullCheck(L_6);
+		BowController_StartDraw_mCE48C1E8A665FD06ACEFB1D90CE32D4641B3BE9A(L_6, ((XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4*)IsInstClass((RuntimeObject*)L_8, XRBaseInteractor_t4AF6FC9A7611B9417B4A43E11704AFF85B4A0FB4_il2cpp_TypeInfo_var)), NULL);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:21>
 		return;
 	}
 }
-// Method Definition Index: 99009
+// Method Definition Index: 98989
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void DrawInteractable_OnSelectExited_m1862C6EBB14DA89B5BF324033877ED5271E3C5D6 (DrawInteractable_t3E70C7457D98DC1A97B3C85D4F9D169D4C941B30* __this, SelectExitEventArgs_t56125CE0360D37AC0B50EB6066B5AB5957EF559A* ___0_args, const RuntimeMethod* method) 
 {
+	static bool s_Il2CppMethodInitialized;
+	if (!s_Il2CppMethodInitialized)
 	{
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:24>
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&Debug_t8394C7EEAECA3689C2C9B9DE9C7166D73596276F_il2cpp_TypeInfo_var);
+		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&_stringLiteral77FD4A81A461031944CD0D12B907B00D0B8B82E2);
+		s_Il2CppMethodInitialized = true;
+	}
+	{
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:25>
 		SelectExitEventArgs_t56125CE0360D37AC0B50EB6066B5AB5957EF559A* L_0 = ___0_args;
 		XRBaseInteractable_OnSelectExited_m2ED47072F75C48ECDE51704F2F799C42083EE8A9(__this, L_0, NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:25>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:26>
+		il2cpp_codegen_runtime_class_init_inline(Debug_t8394C7EEAECA3689C2C9B9DE9C7166D73596276F_il2cpp_TypeInfo_var);
+		Debug_Log_m87A9A3C761FF5C43ED8A53B16190A53D08F818BB(_stringLiteral77FD4A81A461031944CD0D12B907B00D0B8B82E2, NULL);
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:27>
 		BowController_tAF7278C12099EFA4B37604A8B051849671F5C653* L_1 = __this->___bow;
 		NullCheck(L_1);
 		BowController_Release_mF35C7D11EA57C31653390B923152164E0DFF8261(L_1, NULL);
-		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:26>
+		//<source_info:C:/Users/spyrex/Documents/Uni/Unizar/VR/Course_Project_Vr/Assets/Scripts/Objects/DrawInteractable.cs:28>
 		return;
 	}
 }
-// Method Definition Index: 99010
+// Method Definition Index: 98990
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void DrawInteractable__ctor_mE788A2A67B30EA124EFD9ADA22C1AC089DC47CC0 (DrawInteractable_t3E70C7457D98DC1A97B3C85D4F9D169D4C941B30* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3427,7 +3571,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void DrawInteractable__ctor_mE788A2A67B30EA12
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 99011
+// Method Definition Index: 98991
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler_Awake_mDE96BC10EA4928328B08EC51D98334CDBF207ACF (ArrowCollisionHandler_t3AA2D710F5B376DCA7F73FDF5DBECDC8B785A7DC* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3446,7 +3590,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler_Awake_mDE96BC10EA4
 		return;
 	}
 }
-// Method Definition Index: 99012
+// Method Definition Index: 98992
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler_OnEnable_m37D2C6CEE7AE87F236C3F5A10526AE258534585A (ArrowCollisionHandler_t3AA2D710F5B376DCA7F73FDF5DBECDC8B785A7DC* __this, const RuntimeMethod* method) 
 {
 	{
@@ -3456,7 +3600,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler_OnEnable_m37D2C6CE
 		return;
 	}
 }
-// Method Definition Index: 99013
+// Method Definition Index: 98993
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler_OnCollisionEnter_m5EDF22FF88C165DAD70F3A3C8BABB35BF32B0A34 (ArrowCollisionHandler_t3AA2D710F5B376DCA7F73FDF5DBECDC8B785A7DC* __this, Collision_tBCC6AEBD9A63E6DA2E50660DAC03CDCB1FF7A9B0* ___0_collision, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3627,7 +3771,7 @@ IL_00b7:
 		return;
 	}
 }
-// Method Definition Index: 99014
+// Method Definition Index: 98994
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler_StickTo_mE5388D7D5EBB519DE91899510B3B168EFC67CEE5 (ArrowCollisionHandler_t3AA2D710F5B376DCA7F73FDF5DBECDC8B785A7DC* __this, Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* ___0_parent, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3670,7 +3814,7 @@ IL_0026:
 		return;
 	}
 }
-// Method Definition Index: 99015
+// Method Definition Index: 98995
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler_AssignExperimentManager_m78C7B496A4B504A0409CDA3318FF245496646616 (ArrowCollisionHandler_t3AA2D710F5B376DCA7F73FDF5DBECDC8B785A7DC* __this, ExperimentManager_tC2272C40F0B89156C1B7EF75F03629C23CB7829B* ___0_manager, const RuntimeMethod* method) 
 {
 	{
@@ -3682,7 +3826,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler_AssignExperimentMa
 		return;
 	}
 }
-// Method Definition Index: 99016
+// Method Definition Index: 98996
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler_ResetCollisionState_mC506DD243CFE56117BFF4A12E8C481E1F26B5A24 (ArrowCollisionHandler_t3AA2D710F5B376DCA7F73FDF5DBECDC8B785A7DC* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3721,7 +3865,7 @@ IL_002d:
 		return;
 	}
 }
-// Method Definition Index: 99017
+// Method Definition Index: 98997
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler__ctor_mF0D0B4C0453C899ABE989B02A05B406CFCDAF556 (ArrowCollisionHandler_t3AA2D710F5B376DCA7F73FDF5DBECDC8B785A7DC* __this, const RuntimeMethod* method) 
 {
 	{
@@ -3741,7 +3885,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ArrowCollisionHandler__ctor_mF0D0B4C0453
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 99018
+// Method Definition Index: 98998
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* TargetScoring_get_TargetCenter_m0C35194671E7520E2D33CD96E139691555FEBF8B (TargetScoring_tC6A87DED1DEA2B9A26E50F59AF7FA1B484EF642E* __this, const RuntimeMethod* method) 
 {
 	{
@@ -3750,7 +3894,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Transform_tB27202C6F4E36D225EE28A13E4D662BF99
 		return L_0;
 	}
 }
-// Method Definition Index: 99019
+// Method Definition Index: 98999
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float TargetScoring_get_MaxScoringRadius_m2C739740428E3E027E3468AAA92A155E0EE37C72 (TargetScoring_tC6A87DED1DEA2B9A26E50F59AF7FA1B484EF642E* __this, const RuntimeMethod* method) 
 {
 	{
@@ -3759,7 +3903,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float TargetScoring_get_MaxScoringRadius_m2C7
 		return L_0;
 	}
 }
-// Method Definition Index: 99020
+// Method Definition Index: 99000
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t TargetScoring_CalculateScore_m253FA55D1DCE612DB0284C0B823EAAA876936669 (TargetScoring_tC6A87DED1DEA2B9A26E50F59AF7FA1B484EF642E* __this, Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 ___0_hitPoint, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3831,7 +3975,7 @@ IL_002d:
 		return L_13;
 	}
 }
-// Method Definition Index: 99021
+// Method Definition Index: 99001
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float TargetScoring_GetDistanceFromCenter_m084484AE5C90029DBBEC31BE6888F1F5AF45DC33 (TargetScoring_tC6A87DED1DEA2B9A26E50F59AF7FA1B484EF642E* __this, Vector3_t24C512C7B96BBABAD472002D0BA2BDA40A5A80B2 ___0_hitPoint, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3869,7 +4013,7 @@ IL_0014:
 		return L_5;
 	}
 }
-// Method Definition Index: 99022
+// Method Definition Index: 99002
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void TargetScoring__ctor_mC1B35A4991771BD6FB18CA23AFDC0639C9664955 (TargetScoring_tC6A87DED1DEA2B9A26E50F59AF7FA1B484EF642E* __this, const RuntimeMethod* method) 
 {
 	{
@@ -3889,7 +4033,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void TargetScoring__ctor_mC1B35A4991771BD6FB1
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 99023
+// Method Definition Index: 99003
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Readme__ctor_m69C325C4C171DCB0312B646A9034AA91EA8C39C6 (Readme_tE17B99201D0F52BD5727638AD3F41072A65B3BBB* __this, const RuntimeMethod* method) 
 {
 	{
@@ -3905,7 +4049,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Readme__ctor_m69C325C4C171DCB0312B646A90
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 99024
+// Method Definition Index: 99004
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Section__ctor_m5F732533E4DFC0167D965E5F5DB332E46055399B (Section_t50C894D0A717C2368EBAAE5477D4E8626D0B5401* __this, const RuntimeMethod* method) 
 {
 	{
@@ -3921,7 +4065,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Section__ctor_m5F732533E4DFC0167D965E5F5
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 99025
+// Method Definition Index: 99005
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR MonoScriptData_t8F50E352855B96FFFC1D9CB07EACC90C99D73A3E UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mBEB95BEB954BB63E9710BBC7AD5E78C4CB0A0033 (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3955,7 +4099,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR MonoScriptData_t8F50E352855B96FFFC1D9CB07EACC
 		return L_6;
 	}
 }
-// Method Definition Index: 99026
+// Method Definition Index: 99006
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mE70FB23ACC1EA12ABC948AA22C2E78B2D0AA39B1 (UnitySourceGeneratedAssemblyMonoScriptTypes_v1_tC95F24D0C6E6B77389433852BB389F39C692926E* __this, const RuntimeMethod* method) 
 {
 	{
