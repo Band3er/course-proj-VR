@@ -871,6 +871,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 773853689519989575, guid: b3ed8a0a703ebd34a9e44ed3d9f1fcf6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 773190232}
+    - targetCorrespondingSourceObject: {fileID: 773853689519989575, guid: b3ed8a0a703ebd34a9e44ed3d9f1fcf6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 773190237}
   m_SourcePrefab: {fileID: 100100000, guid: b3ed8a0a703ebd34a9e44ed3d9f1fcf6, type: 3}
 --- !u!4 &773190230 stripped
 Transform:
@@ -1042,6 +1045,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_PhysicsTriggerInteraction: 1
+--- !u!114 &773190237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773190231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50f8e6a650d21cd4d9459d1d639f9d01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HandPinchSelector
+  interactor: {fileID: 773190233}
+  handedness: 1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
