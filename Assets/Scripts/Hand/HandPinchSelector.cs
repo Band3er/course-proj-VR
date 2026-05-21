@@ -17,24 +17,27 @@ public class HandPinchSelector : MonoBehaviour
             handSubsystem = subsystems[0];
     }
 
-    void Update()
-    {
-        if (handSubsystem == null) return;
+	void Update()
+	{
+		if (handSubsystem == null)
+		{
+			// Controller mode - lasă allowSelect cum e setat în Editor
+			return;
+		}
 
-        var hand = handedness == Handedness.Left ?
-            handSubsystem.leftHand : handSubsystem.rightHand;
+		var hand = handedness == Handedness.Left ?
+			handSubsystem.leftHand : handSubsystem.rightHand;
 
-        if (!hand.isTracked) return;
+		if (!hand.isTracked)
+		{
+			interactor.allowSelect = false; // mâna nu e văzută
+			return;
+		}
 
-        hand.GetJoint(XRHandJointID.IndexTip).TryGetPose(out Pose indexPose);
-        hand.GetJoint(XRHandJointID.ThumbTip).TryGetPose(out Pose thumbPose);
+		hand.GetJoint(XRHandJointID.IndexTip).TryGetPose(out Pose indexPose);
+		hand.GetJoint(XRHandJointID.ThumbTip).TryGetPose(out Pose thumbPose);
 
-        float distance = Vector3.Distance(indexPose.position, thumbPose.position);
-
-        // Pinch detectat când degetele sunt < 3cm
-        if (distance < 0.03f)
-            interactor.allowSelect = true;
-        else
-            interactor.allowSelect = false;
-    }
+		float distance = Vector3.Distance(indexPose.position, thumbPose.position);
+		interactor.allowSelect = distance < 0.3f;
+	}
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class BowController : MonoBehaviour
@@ -20,14 +21,19 @@ public class BowController : MonoBehaviour
 
     private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable bowGrab;
 
-    void Awake()
-    {
-        bowGrab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
-        bowGrab.selectEntered.AddListener(OnBowGrabbed);
-        bowGrab.selectExited.AddListener(OnBowReleased);
-    }
+	void Awake()
+	{
+		bowGrab = GetComponent<XRGrabInteractable>();
+		if (bowGrab == null)
+		{
+			Debug.LogError("Lipseste XRGrabInteractable de pe bow!");
+			return;
+		}
+		bowGrab.selectEntered.AddListener(OnBowGrabbed);
+		bowGrab.selectExited.AddListener(OnBowReleased);
+	}
 
-    void Update()
+	void Update()
     {
         if (!isDrawing || drawHand == null) return;
 
