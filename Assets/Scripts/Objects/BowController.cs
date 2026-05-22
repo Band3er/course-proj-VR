@@ -1,11 +1,7 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-<<<<<<< Updated upstream
-using UnityEngine.XR.Interaction.Toolkit.Interactors;
-=======
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using Debug = UnityEngine.Debug;
->>>>>>> Stashed changes
 
 public class BowController : MonoBehaviour
 {
@@ -27,18 +23,7 @@ public class BowController : MonoBehaviour
 
     private XRGrabInteractable bowGrabInteractable;
 
-<<<<<<< Updated upstream
-    void Awake()
-    {
-        bowGrab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
-        bowGrab.selectEntered.AddListener(OnBowGrabbed);
-        bowGrab.selectExited.AddListener(OnBowReleased);
-    }
-
-    void Update()
-=======
     private void Awake()
->>>>>>> Stashed changes
     {
         bowGrabInteractable = GetComponent<XRGrabInteractable>();
 
