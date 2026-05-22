@@ -19,18 +19,24 @@ public class HandPinchSelector : MonoBehaviour
 
 	void Update()
 	{
-		if (handSubsystem == null)
-		{
-			// Controller mode - lasă allowSelect cum e setat în Editor
-			return;
-		}
+		if (handSubsystem == null) return;
 
-		var hand = handedness == Handedness.Left ?
-			handSubsystem.leftHand : handSubsystem.rightHand;
+		var hand = handedness == Handedness.Left ? handSubsystem.leftHand : handSubsystem.rightHand;
 
 		if (!hand.isTracked)
 		{
-			interactor.allowSelect = false; // mâna nu e văzută
+			// Dacă ții deja arcul, NU îi da drop doar pentru că s-a pierdut tracking-ul o secundă
+			if (!interactor.hasSelection)
+			{
+				interactor.allowSelect = false;
+			}
+			return;
+		}
+
+		// DACĂ ȚII DEJA ARCUL ÎN MÂNĂ, oprește modificarea lui allowSelect
+		// Asta previne micro-drop-urile cauzate de tremuratul degetelor
+		if (interactor.hasSelection)
+		{
 			return;
 		}
 
@@ -38,6 +44,6 @@ public class HandPinchSelector : MonoBehaviour
 		hand.GetJoint(XRHandJointID.ThumbTip).TryGetPose(out Pose thumbPose);
 
 		float distance = Vector3.Distance(indexPose.position, thumbPose.position);
-		interactor.allowSelect = distance < 0.3f;
+		interactor.allowSelect = distance < 0.03f;
 	}
 }

@@ -8,12 +8,15 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Liu_Environment/Scenes/ArcheryEnvironmentScene.unity
     guid: 3081e59462b9f304683a9197c525478e
   - enabled: 0
     path: Assets/Scenes/XRScene.unity
     guid: 6beeea2de76f8c8499c9f2d5c42b47a6
+  - enabled: 1
+    path: Assets/Scenes/MetaScene.unity
+    guid: 43e0008de1641df45acdf62092ef1240
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: c0189623fe5587241b73bb6cf34723bd, type: 2}
