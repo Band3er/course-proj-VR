@@ -1,25 +1,33 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+<<<<<<< Updated upstream
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+=======
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using Debug = UnityEngine.Debug;
+>>>>>>> Stashed changes
 
 public class BowController : MonoBehaviour
 {
     [Header("References")]
-    public Transform stringAnchor;      // punct fix pe arc unde se ancoreaza coarda
-    public Transform nockPoint;         // locul unde sta sageata
-    public GameObject arrowPrefab;
+    [SerializeField] private Transform stringAnchor;
+    [SerializeField] private Transform nockPoint;
+    [SerializeField] private GameObject arrowPrefab;
 
     [Header("Settings")]
-    public float maxDrawDistance = 0.5f;
-    public float maxLaunchForce = 30f;
+    [SerializeField] private float maxDrawDistance = 0.5f;
+    [SerializeField] private float maxLaunchForce = 30f;
+    [SerializeField] private bool autoSpawnArrowOnDraw = true;
 
-    private UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInteractor drawHand;  // mana care trage
+    private Transform drawTransform;
     private GameObject currentArrow;
-    private bool isDrawing = false;
-    private float drawAmount = 0f;
+    private ArrowController currentArrowController;
+    private bool isDrawing;
+    private float drawAmount;
 
-    private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable bowGrab;
+    private XRGrabInteractable bowGrabInteractable;
 
+<<<<<<< Updated upstream
     void Awake()
     {
         bowGrab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
@@ -28,67 +36,185 @@ public class BowController : MonoBehaviour
     }
 
     void Update()
+=======
+    private void Awake()
+>>>>>>> Stashed changes
     {
-        if (!isDrawing || drawHand == null) return;
+        bowGrabInteractable = GetComponent<XRGrabInteractable>();
 
-        // Calculeaza distanta dintre mana de tragere si stringAnchor
-        float dist = Vector3.Distance(drawHand.transform.position, stringAnchor.position);
-        drawAmount = Mathf.Clamp01(dist / maxDrawDistance);
-
-        // Muta nockPoint spre mana
-        if (currentArrow != null)
+        if (bowGrabInteractable == null)
         {
-            Vector3 drawDir = (drawHand.transform.position - stringAnchor.position).normalized;
-            nockPoint.position = stringAnchor.position + drawDir * (drawAmount * maxDrawDistance);
-            currentArrow.transform.position = nockPoint.position;
-            currentArrow.transform.rotation = Quaternion.LookRotation(stringAnchor.position - nockPoint.position);
+            Debug.LogError("[BowController] Missing XRGrabInteractable on Bow.");
+            return;
         }
+
+        bowGrabInteractable.selectEntered.AddListener(OnBowGrabbed);
+        bowGrabInteractable.selectExited.AddListener(OnBowReleased);
     }
 
-    // Mana opusa care apuca "coarda"
-    public void StartDraw(XRBaseInteractor hand)
+    private void OnDestroy()
     {
-        Debug.Log("StartDraw called. Hand: " + (hand != null) + " isDrawing: " + isDrawing);
+        if (bowGrabInteractable == null)
+        {
+            return;
+        }
 
-        if (isDrawing) return;
+        bowGrabInteractable.selectEntered.RemoveListener(OnBowGrabbed);
+        bowGrabInteractable.selectExited.RemoveListener(OnBowReleased);
+    }
 
-        drawHand = hand;
+    private void Update()
+    {
+        if (!isDrawing || drawTransform == null || stringAnchor == null || nockPoint == null)
+        {
+            return;
+        }
+
+        UpdateDraw();
+    }
+
+    public void StartDraw(Transform pullingTransform)
+    {
+        Debug.Log("[BowController] StartDraw called.");
+
+        if (pullingTransform == null)
+        {
+            Debug.LogWarning("[BowController] StartDraw failed: pullingTransform is null.");
+            return;
+        }
+
+        if (stringAnchor == null)
+        {
+            Debug.LogWarning("[BowController] StartDraw failed: stringAnchor is not assigned.");
+            return;
+        }
+
+        if (nockPoint == null)
+        {
+            Debug.LogWarning("[BowController] StartDraw failed: nockPoint is not assigned.");
+            return;
+        }
+
+        if (arrowPrefab == null)
+        {
+            Debug.LogWarning("[BowController] StartDraw failed: arrowPrefab is not assigned.");
+            return;
+        }
+
+        if (isDrawing)
+        {
+            Debug.Log("[BowController] Already drawing.");
+            return;
+        }
+
+        drawTransform = pullingTransform;
         isDrawing = true;
+        drawAmount = 0f;
 
-        Debug.Log("Arrow Prefab: " + (arrowPrefab != null));
-        Debug.Log("NockPoint: " + (nockPoint != null));
-
-        currentArrow = Instantiate(arrowPrefab, nockPoint.position, nockPoint.rotation);
-        currentArrow.GetComponent<Rigidbody>().isKinematic = true;
-        currentArrow.GetComponent<ArrowController>().SetNocked(true);
-
-        Debug.Log("Arrow spawned: " + (currentArrow != null));
+        if (autoSpawnArrowOnDraw)
+        {
+            SpawnArrowAtNockPoint();
+        }
     }
 
     public void Release()
     {
-        if (!isDrawing || currentArrow == null) return;
+        Debug.Log("[BowController] Release called.");
+
+        if (!isDrawing)
+        {
+            Debug.Log("[BowController] Release ignored: not currently drawing.");
+            return;
+        }
 
         isDrawing = false;
 
-        // Calculeaza directia si forta
-        Vector3 launchDir = (stringAnchor.position - nockPoint.position).normalized;
-        float force = drawAmount * maxLaunchForce;
+        if (currentArrow == null || currentArrowController == null)
+        {
+            Debug.LogWarning("[BowController] Release failed: no current arrow.");
+            ResetDrawState();
+            return;
+        }
 
-        // Activeaza fizica si lanseaza
-        Rigidbody rb = currentArrow.GetComponent<Rigidbody>();
-        rb.isKinematic = false;
-        rb.linearVelocity = launchDir * force;
+        float launchForce = drawAmount * maxLaunchForce;
 
-        currentArrow.GetComponent<ArrowController>().Launch(launchDir);
+        if (launchForce <= 0.05f)
+        {
+            Debug.LogWarning("[BowController] Release ignored: draw amount is too small.");
+            Destroy(currentArrow);
+            ResetDrawState();
+            return;
+        }
+
+        Vector3 launchDirection = nockPoint.forward.normalized;
+
+        currentArrow.transform.SetParent(null, true);
+        currentArrowController.Launch(launchDirection, launchForce);
+
+        Debug.Log($"[BowController] Arrow launched. DrawAmount={drawAmount:F2}, Force={launchForce:F2}, Direction={launchDirection}");
+
         currentArrow = null;
-        drawHand = null;
+        currentArrowController = null;
+        ResetDrawState();
+    }
+
+    private void UpdateDraw()
+    {
+        Vector3 drawVector = drawTransform.position - stringAnchor.position;
+        float drawDistance = Mathf.Clamp(drawVector.magnitude, 0f, maxDrawDistance);
+
+        drawAmount = Mathf.Clamp01(drawDistance / maxDrawDistance);
+
+        Vector3 drawDirection = drawVector.sqrMagnitude > 0.0001f
+            ? drawVector.normalized
+            : -nockPoint.forward;
+
+        Vector3 newNockPosition = stringAnchor.position + drawDirection * drawDistance;
+
+        nockPoint.position = newNockPosition;
+
+        if (currentArrow != null)
+        {
+            currentArrow.transform.position = nockPoint.position;
+            currentArrow.transform.rotation = nockPoint.rotation;
+        }
+    }
+
+    private void SpawnArrowAtNockPoint()
+    {
+        currentArrow = Instantiate(arrowPrefab, nockPoint.position, nockPoint.rotation);
+        currentArrow.name = "Arrow_Runtime";
+
+        currentArrowController = currentArrow.GetComponent<ArrowController>();
+
+        if (currentArrowController == null)
+        {
+            Debug.LogWarning("[BowController] Spawned arrow has no ArrowController.");
+            return;
+        }
+
+        currentArrowController.SetNocked(nockPoint);
+
+        Debug.Log("[BowController] Arrow spawned and nocked.");
+    }
+
+    private void ResetDrawState()
+    {
+        drawTransform = null;
         drawAmount = 0f;
     }
 
-    void OnBowGrabbed(SelectEnterEventArgs args) { }
-    void OnBowReleased(SelectExitEventArgs args)
+    private void OnBowGrabbed(SelectEnterEventArgs args)
     {
-        Release();
+        Debug.Log("[BowController] Bow grabbed.");
+    }
+
+    private void OnBowReleased(SelectExitEventArgs args)
+    {
+        Debug.Log("[BowController] Bow released. Arrow will NOT be launched from bow release.");
+
+        // Important:
+        // Do not call Release() here.
+        // The arrow should only be launched when the string/draw handle is released.
     }
 }

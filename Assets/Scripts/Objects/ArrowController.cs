@@ -1,56 +1,132 @@
 ﻿using UnityEngine;
+using Debug = UnityEngine.Debug;
 
+[RequireComponent(typeof(Rigidbody))]
 public class ArrowController : MonoBehaviour
 {
-    private Rigidbody rb;
-    private bool isNocked = false;
-    private bool isLaunched = false;
-    private bool hasHit = false;
+    private Rigidbody arrowRigidbody;
+    private bool isNocked;
+    private bool isLaunched;
+    private bool hasHit;
 
-    void Awake()
+    private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-    }
+        arrowRigidbody = GetComponent<Rigidbody>();
 
-    void Update()
-    {
-        // Sageata se roteste in directia de zbor (realista)
-        if (isLaunched && !hasHit && rb.linearVelocity.sqrMagnitude > 0.1f)
+        if (arrowRigidbody == null)
         {
-            transform.rotation = Quaternion.LookRotation(rb.linearVelocity);
+            Debug.LogError("[ArrowController] Missing Rigidbody.");
         }
     }
 
-    public void SetNocked(bool nocked)
+    private void Update()
     {
-        isNocked = nocked;
-        rb.isKinematic = true;
+        if (!isLaunched || hasHit || arrowRigidbody == null)
+        {
+            return;
+        }
+
+        Vector3 velocity = GetVelocity();
+
+        if (velocity.sqrMagnitude > 0.1f)
+        {
+            transform.rotation = Quaternion.LookRotation(velocity.normalized, Vector3.up);
+        }
     }
 
-    public void Launch(Vector3 direction)
+    public void SetNocked(Transform nockPoint)
     {
-        isLaunched = true;
+        isNocked = true;
+        isLaunched = false;
+        hasHit = false;
+
+        if (arrowRigidbody != null)
+        {
+            arrowRigidbody.isKinematic = true;
+            arrowRigidbody.useGravity = false;
+            SetVelocity(Vector3.zero);
+            arrowRigidbody.angularVelocity = Vector3.zero;
+        }
+
+        if (nockPoint != null)
+        {
+            transform.position = nockPoint.position;
+            transform.rotation = nockPoint.rotation;
+            transform.SetParent(nockPoint, true);
+        }
+
+        Debug.Log("[ArrowController] Arrow nocked.");
+    }
+
+    public void Launch(Vector3 direction, float force)
+    {
+        if (arrowRigidbody == null)
+        {
+            Debug.LogWarning("[ArrowController] Cannot launch: Rigidbody is missing.");
+            return;
+        }
+
+        transform.SetParent(null, true);
+
         isNocked = false;
-        rb.isKinematic = false;
-        rb.useGravity = true;
+        isLaunched = true;
+        hasHit = false;
+
+        arrowRigidbody.isKinematic = false;
+        arrowRigidbody.useGravity = true;
+        arrowRigidbody.angularVelocity = Vector3.zero;
+
+        Vector3 launchVelocity = direction.normalized * force;
+        SetVelocity(launchVelocity);
+
+        Debug.Log($"[ArrowController] Arrow launched. Force={force:F2}, Direction={direction}");
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (hasHit) return;
+        if (hasHit || !isLaunched)
+        {
+            return;
+        }
+
         hasHit = true;
         isLaunched = false;
 
-        // Ingheata sageata unde a lovit
-        rb.isKinematic = true;
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
+        if (arrowRigidbody != null)
+        {
+            SetVelocity(Vector3.zero);
+            arrowRigidbody.angularVelocity = Vector3.zero;
+            arrowRigidbody.isKinematic = true;
+            arrowRigidbody.useGravity = false;
+        }
 
-        // Verifica daca a lovit tinta
+        transform.SetParent(collision.transform, true);
+
         if (collision.gameObject.CompareTag("Target"))
         {
-            Debug.Log("HIT TARGET!");
-            // Poti notifica ExperimentManager aici
+            Debug.Log("[ArrowController] HIT TARGET.");
         }
+        else
+        {
+            Debug.Log("[ArrowController] Arrow hit: " + collision.gameObject.name);
+        }
+    }
+
+    private Vector3 GetVelocity()
+    {
+#if UNITY_6000_0_OR_NEWER
+        return arrowRigidbody.linearVelocity;
+#else
+        return arrowRigidbody.velocity;
+#endif
+    }
+
+    private void SetVelocity(Vector3 value)
+    {
+#if UNITY_6000_0_OR_NEWER
+        arrowRigidbody.linearVelocity = value;
+#else
+        arrowRigidbody.velocity = value;
+#endif
     }
 }
