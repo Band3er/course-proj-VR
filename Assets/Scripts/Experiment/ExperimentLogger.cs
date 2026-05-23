@@ -32,14 +32,14 @@ public class ExperimentLogger : MonoBehaviour
             File.WriteAllText(filePath, ShotData.CsvHeader() + "\n");
         }
 
-        Debug.Log($"[ExperimentLogger] CSV path: {filePath}");
+        Debug.Log($"[DEBUG] CSV path: {filePath}");
     }
 
     public void LogShot(ShotData data)
     {
         if (data == null)
         {
-            Debug.LogWarning("[ExperimentLogger] Tried to log null ShotData.");
+            Debug.LogWarning("[DEBUG] Tried to log null ShotData.");
             return;
         }
 
@@ -51,7 +51,7 @@ public class ExperimentLogger : MonoBehaviour
         File.AppendAllText(filePath, data.ToCsvLine() + "\n");
 
         Debug.Log(
-            $"[ExperimentLogger] Logged shot {data.shotNumber} | " +
+            $"[DEBUG] Logged shot {data.shotNumber} | " +
             $"Mode={data.inputMode} | Hit={data.hit} | Score={data.score}"
         );
     }

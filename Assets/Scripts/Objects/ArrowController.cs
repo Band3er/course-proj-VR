@@ -2,55 +2,38 @@
 
 public class ArrowController : MonoBehaviour
 {
-    private Rigidbody rb;
-    private bool isNocked = false;
-    private bool isLaunched = false;
-    private bool hasHit = false;
+	private bool isNocked = false;
+	private Rigidbody rb;
 
-    void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
+	void Awake()
+	{
+		rb = GetComponent<Rigidbody>();
+	}
 
-    void Update()
-    {
-        // Sageata se roteste in directia de zbor (realista)
-        if (isLaunched && !hasHit && rb.linearVelocity.sqrMagnitude > 0.1f)
-        {
-            transform.rotation = Quaternion.LookRotation(rb.linearVelocity);
-        }
-    }
+	// Apelat de BowDrawController la StartDraw
+	public void SetNocked(Transform nockPoint)
+	{
+		isNocked = true;
+		rb.isKinematic = true;
+		rb.useGravity = false;
+		transform.SetParent(nockPoint);
+	}
 
-    public void SetNocked(bool nocked)
-    {
-        isNocked = nocked;
-        rb.isKinematic = true;
-    }
+	// Apelat de BowDrawController la Release
+	public void Launch(Vector3 direction, float force)
+	{
+		isNocked = false;
+		transform.SetParent(null);
+		rb.isKinematic = false;
+		rb.useGravity = true;
+		rb.AddForce(direction.normalized * force, ForceMode.Impulse);
+	}
 
-    public void Launch(Vector3 direction)
-    {
-        isLaunched = true;
-        isNocked = false;
-        rb.isKinematic = false;
-        rb.useGravity = true;
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        if (hasHit) return;
-        hasHit = true;
-        isLaunched = false;
-
-        // Ingheata sageata unde a lovit
-        rb.isKinematic = true;
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-
-        // Verifica daca a lovit tinta
-        if (collision.gameObject.CompareTag("Target"))
-        {
-            Debug.Log("HIT TARGET!");
-            // Poti notifica ExperimentManager aici
-        }
-    }
+	void Update()
+	{
+		if (!isNocked && rb.linearVelocity.sqrMagnitude > 0.01f)
+		{
+			transform.rotation = Quaternion.LookRotation(rb.linearVelocity);
+		}
+	}
 }

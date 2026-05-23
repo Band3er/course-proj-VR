@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 0
-    path: Assets/Liu_Environment/Scenes/ArcheryEnvironmentScene.unity
+    path: Assets/Scenes/ArcheryEnvironmentScene.unity
     guid: 3081e59462b9f304683a9197c525478e
   - enabled: 0
     path: Assets/Scenes/XRScene.unity
