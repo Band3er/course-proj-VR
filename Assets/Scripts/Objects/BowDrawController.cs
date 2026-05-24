@@ -6,13 +6,18 @@ public class BowDrawController : MonoBehaviour
 {
 	[Header("References")]
 	public Transform stringGrabPoint;
+	public Transform stringRestPoint;
 	public Transform bowHoldPoint;
 	public Transform arrowSpawnPoint;
 	public GameObject arrowPrefab;
 
 	[Header("Draw Settings")]
-	public float maxDrawDistance = 0.35f;
+	public float maxDrawDistance = 0.25f;   // reduce this for shorter draw
 	public float maxLaunchForce = 40f;
+
+	public enum DrawAxis { NegZ, PosZ, NegX, PosX, NegY, PosY }
+	public DrawAxis drawAxis = DrawAxis.NegZ;
+	[Header("Draw Axis (change if Draw=0)")]
 
 	[Header("Interaction")]
 	public HandGrabInteractable stringInteractable;
@@ -20,29 +25,33 @@ public class BowDrawController : MonoBehaviour
 	[Header("Experiment (optional)")]
 	public ArcheryEventBridge eventBridge;
 
+	// ── State ──────────────────────────────────────────────────────────────
 	private bool isDrawing = false;
 	private bool isStringGrabbed = false;
 	private float currentDrawAmount = 0f;
+	private float smoothDraw = 0f;
+
+	// desired draw distance this frame — set in Update, applied in LateUpdate
+	private float _targetDrawDistance = 0f;
+
+	private HandGrabInteractor activeInteractor;
+	private Rigidbody stringRb;
 
 	private GameObject currentArrow;
 	private ArrowController currentArrowController;
 	private Rigidbody arrowRb;
 
-	private HandGrabInteractor activeInteractor;
-	public Transform stringRestPoint;
-
-	private float smoothDraw;
+	// ── Lifecycle ──────────────────────────────────────────────────────────
+	void Awake()
+	{
+		stringRb = stringGrabPoint != null
+			? stringGrabPoint.GetComponent<Rigidbody>()
+			: null;
+	}
 
 	void OnEnable()
 	{
-		if (stringInteractable == null)
-		{
-			Debug.LogError("[DEBUG] stringInteractable is NULL!");
-			return;
-		}
-
-		Debug.Log("[DEBUG] Subscribed to string events OK");
-
+		if (stringInteractable == null) { Debug.LogError("[BOW] stringInteractable is NULL!"); return; }
 		stringInteractable.WhenSelectingInteractorAdded.Action += OnStringGrabbed;
 		stringInteractable.WhenSelectingInteractorRemoved.Action += OnStringReleased;
 	}
@@ -50,197 +59,183 @@ public class BowDrawController : MonoBehaviour
 	void OnDisable()
 	{
 		if (stringInteractable == null) return;
-
 		stringInteractable.WhenSelectingInteractorAdded.Action -= OnStringGrabbed;
 		stringInteractable.WhenSelectingInteractorRemoved.Action -= OnStringReleased;
 	}
 
+	// ── Grab callbacks ─────────────────────────────────────────────────────
 	private void OnStringGrabbed(HandGrabInteractor interactor)
 	{
-		if (isStringGrabbed)
-		{
-			Debug.Log("[DEBUG] Already grabbed -> ignoring");
-			return;
-		}
-
-		Debug.Log("[DEBUG] String GRABBED!");
-
+		if (isStringGrabbed) return;
+		Debug.Log("[BOW] String GRABBED by: " + interactor.name);
 		isStringGrabbed = true;
 		activeInteractor = interactor;
+
+		// Take over the string rigidbody so the SDK can't drag the bow
+		if (stringRb != null)
+		{
+			stringRb.isKinematic = true;
+			stringRb.useGravity = false;
+		}
 
 		eventBridge?.OnShotStarted();
 	}
 
 	private void OnStringReleased(HandGrabInteractor interactor)
 	{
-		Debug.Log("[DEBUG] String RELEASED!");
-
+		if (activeInteractor != null && interactor != activeInteractor) return;
+		Debug.Log("[BOW] String RELEASED.");
 		isStringGrabbed = false;
 		activeInteractor = null;
 	}
 
+	// ── Update: compute draw amount only ──────────────────────────────────
 	void Update()
 	{
 		if (isStringGrabbed)
 		{
-			if (!isDrawing)
-			{
-				Debug.Log("[DEBUG] Starting draw...");
-				StartDraw();
-			}
-
-			UpdateDraw();
+			if (!isDrawing) StartDraw();
+			ComputeDraw();
 		}
 		else if (isDrawing)
 		{
-			Debug.Log("[DEBUG] Releasing arrow...");
 			ReleaseArrow();
 		}
 	}
 
-	void StartDraw()
+	// ── LateUpdate: apply position AFTER the Oculus SDK has run ───────────
+	void LateUpdate()
 	{
-		isDrawing = true;
+		if (!isDrawing) return;
 
-		Debug.Log("[DEBUG] Instantiating arrow");
-
-		currentArrow = Instantiate(
-			arrowPrefab,
-			arrowSpawnPoint.position,
-			arrowSpawnPoint.rotation
+		// Override string position — runs after SDK, so we always win
+		stringGrabPoint.localPosition = new Vector3(
+			stringGrabPoint.localPosition.x,
+			stringGrabPoint.localPosition.y,
+			-_targetDrawDistance
 		);
 
-		if (currentArrow == null)
-		{
-			Debug.LogWarning("[DEBUG] Failed to instantiate arrow!");
-			return;
-		}
-
-		arrowRb = currentArrow.GetComponent<Rigidbody>();
-		currentArrowController = currentArrow.GetComponent<ArrowController>();
-
-		if (arrowRb == null)
-		{
-			Debug.LogError("[DEBUG] Arrow Rigidbody missing!");
-		}
-
-		if (currentArrowController != null)
-		{
-			Debug.Log("[DEBUG] ArrowController found -> SetNocked()");
-			currentArrowController.SetNocked(arrowSpawnPoint);
-		}
-		else
-		{
-			Debug.LogWarning("[DEBUG] ArrowController missing, fallback mode");
-
-			arrowRb.isKinematic = true;
-		}
-	}
-
-	void UpdateDraw()
-	{
-		if (activeInteractor == null)
-			return;
-
-		Vector3 handPos =
-			activeInteractor.transform.position;
-
-		Vector3 localHandPos =
-			bowHoldPoint.InverseTransformPoint(handPos);
-
-		// presupunem că arcul trage pe axa Z
-		float rawDraw =
-			-localHandPos.z;
-
-		float drawDistance =
-			Mathf.Clamp(rawDraw, 0f, maxDrawDistance);
-
-		smoothDraw = Mathf.Lerp(smoothDraw, drawDistance, Time.deltaTime * 20f);
-
-		currentDrawAmount = smoothDraw / maxDrawDistance;
-
-		// mută coarda
-		stringGrabPoint.localPosition =
-			new Vector3(
-				stringGrabPoint.localPosition.x,
-				stringGrabPoint.localPosition.y,
-				-drawDistance
-			);
-
-
-
-		// mută săgeata împreună cu coarda
+		// Keep the arrow at the string, pointing forward
 		if (currentArrow != null)
 		{
 			currentArrow.transform.position = stringGrabPoint.position;
 			currentArrow.transform.rotation = arrowSpawnPoint.rotation;
 		}
-
-
-		Debug.Log(
-			"[DEBUG] Draw Distance = " +
-			drawDistance +
-			" Draw Amount = " +
-			currentDrawAmount
-		);
 	}
 
+	// ── Draw phase ─────────────────────────────────────────────────────────
+	void StartDraw()
+	{
+		isDrawing = true;
+		smoothDraw = 0f;
+		_targetDrawDistance = 0f;
+
+		currentArrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, arrowSpawnPoint.rotation);
+		if (currentArrow == null) { Debug.LogError("[BOW] Arrow instantiation FAILED."); return; }
+
+		arrowRb = currentArrow.GetComponent<Rigidbody>();
+		currentArrowController = currentArrow.GetComponent<ArrowController>();
+
+		if (currentArrowController != null)
+			currentArrowController.SetNocked(arrowSpawnPoint);
+		else if (arrowRb != null)
+			arrowRb.isKinematic = true;
+	}
+
+	void ComputeDraw()
+	{
+		if (activeInteractor == null) return;
+
+		// Încearcă să ia poziția reală a mâinii din Oculus API
+		Vector3 handWorldPos;
+		Pose rootPose;
+
+		if (activeInteractor.Hand != null &&
+			activeInteractor.Hand.GetRootPose(out rootPose))
+		{
+			handWorldPos = rootPose.position;
+		}
+		else
+		{
+			// fallback dacă Hand API nu e disponibil
+			handWorldPos = activeInteractor.transform.position;
+		}
+
+		Vector3 localHand = bowHoldPoint.InverseTransformPoint(handWorldPos);
+
+		Debug.Log("[BOW] localHand X=" + localHand.x.ToString("F3") +
+				  " Y=" + localHand.y.ToString("F3") +
+				  " Z=" + localHand.z.ToString("F3"));
+
+		float rawDraw = GetRawDraw(localHand);
+		float drawDistance = Mathf.Clamp(rawDraw, 0f, maxDrawDistance);
+
+		smoothDraw = Mathf.Lerp(smoothDraw, drawDistance, Time.deltaTime * 20f);
+		currentDrawAmount = smoothDraw / maxDrawDistance;
+		_targetDrawDistance = smoothDraw;
+
+		Debug.Log("[BOW] Draw=" + drawDistance.ToString("F3") +
+				  " Amount=" + currentDrawAmount.ToString("F3"));
+	}
+
+	private float GetRawDraw(Vector3 localHand)
+	{
+		switch (drawAxis)
+		{
+			case DrawAxis.NegZ: return -localHand.z;
+			case DrawAxis.PosZ: return localHand.z;
+			case DrawAxis.NegX: return -localHand.x;
+			case DrawAxis.PosX: return localHand.x;
+			case DrawAxis.NegY: return -localHand.y;
+			case DrawAxis.PosY: return localHand.y;
+			default: return -localHand.z;
+		}
+	}
+
+	// ── Release ────────────────────────────────────────────────────────────
 	void ReleaseArrow()
 	{
 		isDrawing = false;
+		_targetDrawDistance = 0f;
 
-		if (currentArrow == null)
-		{
-			Debug.LogError("[DEBUG] currentArrow NULL on release!");
-			return;
-		}
+		if (currentArrow == null) { ResetString(); return; }
 
 		eventBridge?.OnArrowReleased();
 
 		float force = currentDrawAmount * maxLaunchForce;
+		Debug.Log("[BOW] Launching with force = " + force.ToString("F2"));
 
-		Debug.Log("[DEBUG] Launch Force = " + force);
-
-		if (force < 0.1f)
+		if (force < 0.5f)
 		{
-			Debug.LogWarning("[DEBUG] Force too small!");
+			Destroy(currentArrow);
 		}
-
-		if (currentArrowController != null)
+		else if (currentArrowController != null)
 		{
-			Debug.Log("[DEBUG] Launching with ArrowController");
-
-			currentArrowController.Launch(
-				arrowSpawnPoint.forward,
-				force
-			);
+			currentArrowController.Launch(arrowSpawnPoint.forward, force);
 		}
-		else
+		else if (arrowRb != null)
 		{
-			Debug.Log("[DEBUG] Launch fallback mode");
-
 			arrowRb.isKinematic = false;
 			arrowRb.useGravity = true;
-
-			arrowRb.AddForce(
-				arrowSpawnPoint.forward * force,
-				ForceMode.VelocityChange
-			);
-
+			arrowRb.linearVelocity = arrowSpawnPoint.forward * force;
 		}
 
-		Debug.DrawRay(
-			arrowSpawnPoint.position,
-			arrowSpawnPoint.forward * 2f,
-			Color.red,
-			5f
-		);
+		Debug.DrawRay(arrowSpawnPoint.position, arrowSpawnPoint.forward * 3f, Color.red, 3f);
+		ResetString();
+	}
 
-		stringGrabPoint.localPosition =
-			stringRestPoint.localPosition;
+	private void ResetString()
+	{
+		if (stringRestPoint != null)
+			stringGrabPoint.localPosition = stringRestPoint.localPosition;
+		else
+			stringGrabPoint.localPosition = Vector3.zero;
 
 		currentArrow = null;
 		currentArrowController = null;
+		arrowRb = null;
 		currentDrawAmount = 0f;
+		smoothDraw = 0f;
+		_targetDrawDistance = 0f;
 	}
 }

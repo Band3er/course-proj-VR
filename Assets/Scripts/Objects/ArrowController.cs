@@ -1,42 +1,54 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class ArrowController : MonoBehaviour
 {
 	private bool isNocked = false;
+	private bool isFlying = false;
+	private bool isStuck = false;
+
 	private Rigidbody rb;
 
 	void Awake()
 	{
 		rb = GetComponent<Rigidbody>();
-
-		Debug.Log("[ARROW] Awake");
-
-		if (rb == null)
-		{
-			Debug.LogError("[ARROW] Rigidbody missing!");
-		}
+		Debug.Log("[DEBUG] ArrowController Awake");
+		if (rb == null) Debug.LogError("[DEBUG] Rigidbody missing on Arrow!");
 	}
 
+	// ─── Nock ──────────────────────────────────────────────────────────────
 	public void SetNocked(Transform nockPoint)
 	{
 		isNocked = true;
+		isFlying = false;
+		isStuck = false;
 
 		rb.isKinematic = true;
 		rb.useGravity = false;
 
 		transform.SetParent(nockPoint);
-
 		transform.localPosition = Vector3.zero;
 		transform.localRotation = Quaternion.identity;
 	}
 
+	// ─── Launch ────────────────────────────────────────────────────────────
 	public void Launch(Vector3 direction, float force)
 	{
-		Debug.Log("[ARROW] LAUNCH START");
+		Debug.Log("[DEBUG] LAUNCH START | dir=" + direction + " | force=" + force);
 
 		isNocked = false;
+		isFlying = true;
 
 		transform.SetParent(null);
+
+		StartCoroutine(ApplyLaunchForce(direction, force));
+
+		Destroy(gameObject, 15f);
+	}
+
+	private IEnumerator ApplyLaunchForce(Vector3 direction, float force)
+	{
+		yield return new WaitForFixedUpdate();
 
 		rb.isKinematic = false;
 		rb.useGravity = true;
@@ -44,39 +56,81 @@ public class ArrowController : MonoBehaviour
 		rb.linearVelocity = Vector3.zero;
 		rb.angularVelocity = Vector3.zero;
 
-		Debug.Log("[ARROW] BEFORE FORCE velocity = " + rb.linearVelocity);
+		rb.linearVelocity = direction.normalized * force;
 
-		rb.AddForce(direction.normalized * force, ForceMode.VelocityChange);
+		Debug.Log("[DEBUG] AFTER FORCE velocity = " + rb.linearVelocity);
+		Debug.Log("[DEBUG] Arrow position        = " + transform.position);
 
-		Debug.Log("[ARROW] AFTER FORCE velocity = " + rb.linearVelocity);
-
-		Debug.Log("[ARROW] position = " + transform.position);
-
-		Destroy(gameObject, 10f);
+		IgnorePlayerCollision();
 	}
 
-	void Update()
+	// ─── Player collision ignore ───────────────────────────────────────────
+	private void IgnorePlayerCollision()
 	{
-		if (!isNocked)
-		{
-			Debug.Log(
-				"[ARROW] Flying | Pos = " + transform.position +
-				" | Vel = " + rb.linearVelocity.magnitude
-			);
+		Collider arrowCol = GetComponent<Collider>();
+		if (arrowCol == null)
+			arrowCol = GetComponentInChildren<Collider>();
+		if (arrowCol == null) return;
 
-			if (rb.linearVelocity.sqrMagnitude > 0.01f)
+		// 1. Try by "Player" tag
+		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+		// 2. Fallback: scan every collider in the "Player" layer
+		if (players.Length == 0)
+		{
+			int playerLayer = LayerMask.NameToLayer("Player");
+			if (playerLayer >= 0)
 			{
-				transform.rotation =
-					Quaternion.LookRotation(rb.linearVelocity);
+				var allCols = FindObjectsByType<Collider>(FindObjectsSortMode.None);
+				var list = new System.Collections.Generic.List<GameObject>();
+				foreach (var c in allCols)
+					if (c.gameObject.layer == playerLayer)
+						list.Add(c.gameObject);
+				players = list.ToArray();
+			}
+		}
+
+		foreach (var player in players)
+		{
+			foreach (var col in player.GetComponentsInChildren<Collider>(true))
+			{
+				Physics.IgnoreCollision(arrowCol, col, true);
+				Debug.Log("[DEBUG] Ignoring collision with: " + col.gameObject.name);
 			}
 		}
 	}
 
+	// ─── Update ────────────────────────────────────────────────────────────
+	void Update()
+	{
+		if (!isFlying || isStuck) return;
+
+		if (rb.linearVelocity.sqrMagnitude > 0.05f)
+		{
+			transform.rotation = Quaternion.Slerp(
+				transform.rotation,
+				Quaternion.LookRotation(rb.linearVelocity),
+				Time.deltaTime * 15f
+			);
+		}
+	}
+
+	// ─── Collision ─────────────────────────────────────────────────────────
 	void OnCollisionEnter(Collision collision)
 	{
-		Debug.Log(
-			"[ARROW] COLLIDED WITH -> " +
-			collision.gameObject.name
-		);
+		if (isStuck) return;
+
+		Debug.Log("[DEBUG] COLLIDED WITH -> " + collision.gameObject.name);
+
+		isFlying = false;
+		isStuck = true;
+
+		rb.isKinematic = true;
+		rb.useGravity = false;
+
+		transform.SetParent(collision.transform);
+
+		CancelInvoke();
+		Destroy(gameObject, 30f);
 	}
 }
