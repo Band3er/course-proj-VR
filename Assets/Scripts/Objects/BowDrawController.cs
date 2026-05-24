@@ -12,7 +12,7 @@ public class BowDrawController : MonoBehaviour
 	public GameObject arrowPrefab;
 
 	[Header("Draw Settings")]
-	public float maxDrawDistance = 0.25f;   // reduce this for shorter draw
+	public float maxDrawDistance = 0.25f;
 	public float maxLaunchForce = 40f;
 
 	public enum DrawAxis { NegZ, PosZ, NegX, PosX, NegY, PosY }
@@ -20,7 +20,8 @@ public class BowDrawController : MonoBehaviour
 	[Header("Draw Axis (change if Draw=0)")]
 
 	[Header("Interaction")]
-	public HandGrabInteractable stringInteractable;
+	public HandGrabInteractable stringInteractable;       // maini
+	public GrabInteractable stringGrabInteractable;       // controllere
 
 	[Header("Experiment (optional)")]
 	public ArcheryEventBridge eventBridge;
@@ -30,13 +31,13 @@ public class BowDrawController : MonoBehaviour
 	private bool isStringGrabbed = false;
 	private float currentDrawAmount = 0f;
 	private float smoothDraw = 0f;
-
-	// desired draw distance this frame — set in Update, applied in LateUpdate
 	private float _targetDrawDistance = 0f;
 
-	private HandGrabInteractor activeInteractor;
-	private Rigidbody stringRb;
+	// Un singur câmp generic pentru ambele tipuri
+	private Transform activeInteractorTransform;
+	private HandGrabInteractor activeHandInteractor;   // doar pentru Hand API
 
+	private Rigidbody stringRb;
 	private GameObject currentArrow;
 	private ArrowController currentArrowController;
 	private Rigidbody arrowRb;
@@ -51,27 +52,42 @@ public class BowDrawController : MonoBehaviour
 
 	void OnEnable()
 	{
-		if (stringInteractable == null) { Debug.LogError("[BOW] stringInteractable is NULL!"); return; }
-		stringInteractable.WhenSelectingInteractorAdded.Action += OnStringGrabbed;
-		stringInteractable.WhenSelectingInteractorRemoved.Action += OnStringReleased;
+		if (stringInteractable != null)
+		{
+			stringInteractable.WhenSelectingInteractorAdded.Action += OnHandGrabbed;
+			stringInteractable.WhenSelectingInteractorRemoved.Action += OnHandReleased;
+		}
+
+		if (stringGrabInteractable != null)
+		{
+			stringGrabInteractable.WhenSelectingInteractorAdded.Action += OnControllerGrabbed;
+			stringGrabInteractable.WhenSelectingInteractorRemoved.Action += OnControllerReleased;
+		}
 	}
 
 	void OnDisable()
 	{
-		if (stringInteractable == null) return;
-		stringInteractable.WhenSelectingInteractorAdded.Action -= OnStringGrabbed;
-		stringInteractable.WhenSelectingInteractorRemoved.Action -= OnStringReleased;
+		if (stringInteractable != null)
+		{
+			stringInteractable.WhenSelectingInteractorAdded.Action -= OnHandGrabbed;
+			stringInteractable.WhenSelectingInteractorRemoved.Action -= OnHandReleased;
+		}
+
+		if (stringGrabInteractable != null)
+		{
+			stringGrabInteractable.WhenSelectingInteractorAdded.Action -= OnControllerGrabbed;
+			stringGrabInteractable.WhenSelectingInteractorRemoved.Action -= OnControllerReleased;
+		}
 	}
 
-	// ── Grab callbacks ─────────────────────────────────────────────────────
-	private void OnStringGrabbed(HandGrabInteractor interactor)
+	// ── Grab callbacks: Maini ──────────────────────────────────────────────
+	private void OnHandGrabbed(HandGrabInteractor interactor)
 	{
 		if (isStringGrabbed) return;
-		Debug.Log("[BOW] String GRABBED by: " + interactor.name);
 		isStringGrabbed = true;
-		activeInteractor = interactor;
+		activeHandInteractor = interactor;
+		activeInteractorTransform = interactor.transform;
 
-		// Take over the string rigidbody so the SDK can't drag the bow
 		if (stringRb != null)
 		{
 			stringRb.isKinematic = true;
@@ -79,17 +95,45 @@ public class BowDrawController : MonoBehaviour
 		}
 
 		eventBridge?.OnShotStarted();
+		Debug.Log("[BOW] String GRABBED (Hand): " + interactor.name);
 	}
 
-	private void OnStringReleased(HandGrabInteractor interactor)
+	private void OnHandReleased(HandGrabInteractor interactor)
 	{
-		if (activeInteractor != null && interactor != activeInteractor) return;
-		Debug.Log("[BOW] String RELEASED.");
+		if (activeHandInteractor != null && interactor != activeHandInteractor) return;
 		isStringGrabbed = false;
-		activeInteractor = null;
+		activeHandInteractor = null;
+		activeInteractorTransform = null;
+		Debug.Log("[BOW] String RELEASED (Hand)");
 	}
 
-	// ── Update: compute draw amount only ──────────────────────────────────
+	// ── Grab callbacks: Controllere ────────────────────────────────────────
+	private void OnControllerGrabbed(GrabInteractor interactor)
+	{
+		if (isStringGrabbed) return;
+		isStringGrabbed = true;
+		activeHandInteractor = null;
+		activeInteractorTransform = interactor.transform;
+
+		if (stringRb != null)
+		{
+			stringRb.isKinematic = true;
+			stringRb.useGravity = false;
+		}
+
+		eventBridge?.OnShotStarted();
+		Debug.Log("[BOW] String GRABBED (Controller): " + interactor.name);
+	}
+
+	private void OnControllerReleased(GrabInteractor interactor)
+	{
+		if (activeInteractorTransform != interactor.transform) return;
+		isStringGrabbed = false;
+		activeInteractorTransform = null;
+		Debug.Log("[BOW] String RELEASED (Controller)");
+	}
+
+	// ── Update ─────────────────────────────────────────────────────────────
 	void Update()
 	{
 		if (isStringGrabbed)
@@ -103,19 +147,18 @@ public class BowDrawController : MonoBehaviour
 		}
 	}
 
-	// ── LateUpdate: apply position AFTER the Oculus SDK has run ───────────
+	// ── LateUpdate ─────────────────────────────────────────────────────────
 	void LateUpdate()
 	{
 		if (!isDrawing) return;
 
-		// Override string position — runs after SDK, so we always win
-		stringGrabPoint.localPosition = new Vector3(
-			stringGrabPoint.localPosition.x,
-			stringGrabPoint.localPosition.y,
-			-_targetDrawDistance
-		);
+		if (stringRestPoint != null)
+		{
+			// Muta string-ul in world space, inapoi de la rest position
+			stringGrabPoint.position = stringRestPoint.position
+				+ (-arrowSpawnPoint.forward) * _targetDrawDistance;
+		}
 
-		// Keep the arrow at the string, pointing forward
 		if (currentArrow != null)
 		{
 			currentArrow.transform.position = stringGrabPoint.position;
@@ -123,7 +166,7 @@ public class BowDrawController : MonoBehaviour
 		}
 	}
 
-	// ── Draw phase ─────────────────────────────────────────────────────────
+	// ── Draw ───────────────────────────────────────────────────────────────
 	void StartDraw()
 	{
 		isDrawing = true;
@@ -144,30 +187,37 @@ public class BowDrawController : MonoBehaviour
 
 	void ComputeDraw()
 	{
-		if (activeInteractor == null) return;
+		if (activeInteractorTransform == null) return;
 
-		// Încearcă să ia poziția reală a mâinii din Oculus API
 		Vector3 handWorldPos;
-		Pose rootPose;
 
-		if (activeInteractor.Hand != null &&
-			activeInteractor.Hand.GetRootPose(out rootPose))
+		if (activeHandInteractor != null && activeHandInteractor.Hand != null)
 		{
-			handWorldPos = rootPose.position;
+			Pose rootPose;
+			handWorldPos = activeHandInteractor.Hand.GetRootPose(out rootPose)
+				? rootPose.position
+				: activeInteractorTransform.position;
 		}
 		else
 		{
-			// fallback dacă Hand API nu e disponibil
-			handWorldPos = activeInteractor.transform.position;
+			handWorldPos = activeInteractorTransform.position;
 		}
 
-		Vector3 localHand = bowHoldPoint.InverseTransformPoint(handWorldPos);
+		// World space — nu depinde de axele bow-ului
+		Vector3 restWorldPos = stringRestPoint != null
+			? stringRestPoint.position
+			: stringGrabPoint.position;
 
-		Debug.Log("[BOW] localHand X=" + localHand.x.ToString("F3") +
-				  " Y=" + localHand.y.ToString("F3") +
-				  " Z=" + localHand.z.ToString("F3"));
+		// Directia de draw = opus directiei sageti, in world space
+		Vector3 drawDirection = -arrowSpawnPoint.forward;
 
-		float rawDraw = GetRawDraw(localHand);
+		float rawDraw = Vector3.Dot(handWorldPos - restWorldPos, drawDirection);
+
+		Debug.Log("[BOW] rawDraw=" + rawDraw.ToString("F3") +
+				  " drawDir=" + drawDirection +
+				  " handPos=" + handWorldPos +
+				  " restPos=" + restWorldPos);
+
 		float drawDistance = Mathf.Clamp(rawDraw, 0f, maxDrawDistance);
 
 		smoothDraw = Mathf.Lerp(smoothDraw, drawDistance, Time.deltaTime * 20f);
@@ -203,7 +253,7 @@ public class BowDrawController : MonoBehaviour
 		eventBridge?.OnArrowReleased();
 
 		float force = currentDrawAmount * maxLaunchForce;
-		Debug.Log("[BOW] Launching with force = " + force.ToString("F2"));
+		Debug.Log("[BOW] Launching force = " + force.ToString("F2"));
 
 		if (force < 0.5f)
 		{
