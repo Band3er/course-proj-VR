@@ -1,0 +1,26 @@
+FOREST ARCHERY - WILDLIFE STAGE 01
+
+Purpose:
+Inspect imported Asset Store animal prefabs before generating gameplay wrappers.
+
+Created folders:
+- Runtime
+- Editor
+- Generated/Definitions
+- Generated/Prefabs
+- Generated/Reports
+- Generated/Materials
+- Documentation
+
+Unity menu:
+Tools > Forest Archery > Wildlife > Asset Inspector
+
+Rules:
+1. Do not move or modify the original Asset Store folders.
+2. Do not add gameplay scripts directly to vendor prefabs.
+3. Assign the original rabbit prefab.
+4. Assign the original deer prefab.
+5. Assign either a bird prefab or the root bird prefab folder.
+6. Generate the report.
+7. Review animations, colliders, root motion, scale and rendering complexity.
+8. Gameplay wrapper prefabs will be generated only after inspection.

@@ -1,8 +1,10 @@
-﻿using System.Collections;
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class ArrowController : MonoBehaviour
 {
+	public static event Action<ArrowController> AnyArrowLaunched;
 	private bool isNocked = false;
 	private bool isFlying = false;
 	private bool isStuck = false;
@@ -38,6 +40,8 @@ public class ArrowController : MonoBehaviour
 
 		isNocked = false;
 		isFlying = true;
+
+		AnyArrowLaunched?.Invoke(this);
 
 		transform.SetParent(null);
 

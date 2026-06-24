@@ -1,291 +1,1748 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Oculus.Interaction;
 using Oculus.Interaction.HandGrab;
 using UnityEngine;
 
 public class BowDrawController : MonoBehaviour
 {
-	[Header("References")]
-	public Transform stringGrabPoint;
-	public Transform stringRestPoint;
-	public Transform bowHoldPoint;
-	public Transform arrowSpawnPoint;
-	public GameObject arrowPrefab;
+    [Header("References")]
+    public Transform stringGrabPoint;
+    public Transform stringRestPoint;
+    public Transform bowHoldPoint;
+    public Transform arrowSpawnPoint;
+    public GameObject arrowPrefab;
 
-	[Header("Draw Settings")]
-	public float maxDrawDistance = 0.25f;
-	public float maxLaunchForce = 40f;
+    [Header("Draw Settings")]
+    public float maxDrawDistance = 0.25f;
+    public float maxLaunchForce = 40f;
+    [Header("Controller Draw Tuning")]
+    [Range(1f, 3f)]
+    public float controllerDrawMultiplier = 1.8f;
 
-	public enum DrawAxis { NegZ, PosZ, NegX, PosX, NegY, PosY }
-	public DrawAxis drawAxis = DrawAxis.NegZ;
-	[Header("Draw Axis (change if Draw=0)")]
+    [Range(0f, 0.03f)]
+    public float controllerDrawDeadZone = 0.0025f;
 
-	[Header("Interaction")]
-	public HandGrabInteractable stringInteractable;       // maini
-	public GrabInteractable stringGrabInteractable;       // controllere
+    [Range(5f, 60f)]
+    public float drawSmoothingSpeed = 30f;
 
-	[Header("Experiment (optional)")]
-	public ArcheryEventBridge eventBridge;
+    public enum DrawAxis
+    {
+        NegZ,
+        PosZ,
+        NegX,
+        PosX,
+        NegY,
+        PosY
+    }
 
-	// ── State ──────────────────────────────────────────────────────────────
-	private bool isDrawing = false;
-	private bool isStringGrabbed = false;
-	private float currentDrawAmount = 0f;
-	private float smoothDraw = 0f;
-	private float _targetDrawDistance = 0f;
+    public DrawAxis drawAxis = DrawAxis.NegZ;
 
-	// Un singur câmp generic pentru ambele tipuri
-	private Transform activeInteractorTransform;
-	private HandGrabInteractor activeHandInteractor;   // doar pentru Hand API
+    [Header("String Interaction")]
+    public HandGrabInteractable stringInteractable;
+    public GrabInteractable stringGrabInteractable;
 
-	private Rigidbody stringRb;
-	private GameObject currentArrow;
-	private ArrowController currentArrowController;
-	private Rigidbody arrowRb;
+    [Header("Bow Hold Interaction")]
+    public HandGrabInteractable bowHandInteractable;
+    public GrabInteractable bowGrabInteractable;
 
-	// ── Lifecycle ──────────────────────────────────────────────────────────
-	void Awake()
-	{
-		stringRb = stringGrabPoint != null
-			? stringGrabPoint.GetComponent<Rigidbody>()
-			: null;
-	}
+    [Header("Archery Rules")]
+    public bool requireBowHeldBeforeDrawing = true;
+    public bool requireOppositeHand = true;
+    public bool disableLegacyHandednessFilters = true;
 
-	void OnEnable()
-	{
-		if (stringInteractable != null)
-		{
-			stringInteractable.WhenSelectingInteractorAdded.Action += OnHandGrabbed;
-			stringInteractable.WhenSelectingInteractorRemoved.Action += OnHandReleased;
-		}
+    [Header("Experiment (optional)")]
+    public ArcheryEventBridge eventBridge;
 
-		if (stringGrabInteractable != null)
-		{
-			stringGrabInteractable.WhenSelectingInteractorAdded.Action += OnControllerGrabbed;
-			stringGrabInteractable.WhenSelectingInteractorRemoved.Action += OnControllerReleased;
-		}
-	}
+    private enum PlayerSide
+    {
+        Unknown,
+        Left,
+        Right
+    }
 
-	void OnDisable()
-	{
-		if (stringInteractable != null)
-		{
-			stringInteractable.WhenSelectingInteractorAdded.Action -= OnHandGrabbed;
-			stringInteractable.WhenSelectingInteractorRemoved.Action -= OnHandReleased;
-		}
+    private enum InputAuthority
+    {
+        None,
+        Hand,
+        Controller
+    }
 
-		if (stringGrabInteractable != null)
-		{
-			stringGrabInteractable.WhenSelectingInteractorAdded.Action -= OnControllerGrabbed;
-			stringGrabInteractable.WhenSelectingInteractorRemoved.Action -= OnControllerReleased;
-		}
-	}
+    private readonly HashSet<HandGrabInteractor>
+        bowHandSelectors =
+            new HashSet<HandGrabInteractor>();
 
-	// ── Grab callbacks: Maini ──────────────────────────────────────────────
-	private void OnHandGrabbed(HandGrabInteractor interactor)
-	{
-		if (isStringGrabbed) return;
-		isStringGrabbed = true;
-		activeHandInteractor = interactor;
-		activeInteractorTransform = interactor.transform;
+    private readonly HashSet<GrabInteractor>
+        bowControllerSelectors =
+            new HashSet<GrabInteractor>();
 
-		if (stringRb != null)
-		{
-			stringRb.isKinematic = true;
-			stringRb.useGravity = false;
-		}
+    private readonly HashSet<HandGrabInteractor>
+        stringHandSelectors =
+            new HashSet<HandGrabInteractor>();
 
-		eventBridge?.OnShotStarted();
-		Debug.Log("[BOW] String GRABBED (Hand): " + interactor.name);
-	}
+    private readonly HashSet<GrabInteractor>
+        stringControllerSelectors =
+            new HashSet<GrabInteractor>();
 
-	private void OnHandReleased(HandGrabInteractor interactor)
-	{
-		if (activeHandInteractor != null && interactor != activeHandInteractor) return;
-		isStringGrabbed = false;
-		activeHandInteractor = null;
-		activeInteractorTransform = null;
-		Debug.Log("[BOW] String RELEASED (Hand)");
-	}
+    private bool isBowHeld;
+    private PlayerSide bowHolderSide =
+        PlayerSide.Unknown;
 
-	// ── Grab callbacks: Controllere ────────────────────────────────────────
-	private void OnControllerGrabbed(GrabInteractor interactor)
-	{
-		if (isStringGrabbed) return;
-		isStringGrabbed = true;
-		activeHandInteractor = null;
-		activeInteractorTransform = interactor.transform;
+    private InputAuthority bowAuthority =
+        InputAuthority.None;
 
-		if (stringRb != null)
-		{
-			stringRb.isKinematic = true;
-			stringRb.useGravity = false;
-		}
+    private bool isDrawing;
+    private bool isStringGrabbed;
+    private bool isCancellingDraw;
 
-		eventBridge?.OnShotStarted();
-		Debug.Log("[BOW] String GRABBED (Controller): " + interactor.name);
-	}
+    private PlayerSide stringUserSide =
+        PlayerSide.Unknown;
 
-	private void OnControllerReleased(GrabInteractor interactor)
-	{
-		if (activeInteractorTransform != interactor.transform) return;
-		isStringGrabbed = false;
-		activeInteractorTransform = null;
-		Debug.Log("[BOW] String RELEASED (Controller)");
-	}
+    private InputAuthority stringAuthority =
+        InputAuthority.None;
 
-	// ── Update ─────────────────────────────────────────────────────────────
-	void Update()
-	{
-		if (isStringGrabbed)
-		{
-			if (!isDrawing) StartDraw();
-			ComputeDraw();
-		}
-		else if (isDrawing)
-		{
-			ReleaseArrow();
-		}
-	}
+    private float currentDrawAmount;
+    private float smoothDraw;
+    private float targetDrawDistance;
 
-	// ── LateUpdate ─────────────────────────────────────────────────────────
-	void LateUpdate()
-	{
-		if (!isDrawing) return;
+    private Rigidbody stringRb;
 
-		if (stringRestPoint != null)
-		{
-			// Muta string-ul in world space, inapoi de la rest position
-			stringGrabPoint.position = stringRestPoint.position
-				+ (-arrowSpawnPoint.forward) * _targetDrawDistance;
-		}
+    private GameObject currentArrow;
+    private ArrowController currentArrowController;
+    private Rigidbody arrowRb;
+    private Vector3 controllerDrawStartWorldPosition;
+    private bool hasControllerDrawStart;
 
-		if (currentArrow != null)
-		{
-			currentArrow.transform.position = stringGrabPoint.position;
-			currentArrow.transform.rotation = arrowSpawnPoint.rotation;
-		}
-	}
+    // Controller selector currently responsible for pulling the string.
+    private GrabInteractor activeStringController;
 
-	// ── Draw ───────────────────────────────────────────────────────────────
-	void StartDraw()
-	{
-		isDrawing = true;
-		smoothDraw = 0f;
-		_targetDrawDistance = 0f;
+    // Physical tracking transform used for controller displacement.
+    private Transform activeControllerTrackingTransform;
 
-		currentArrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, arrowSpawnPoint.rotation);
-		if (currentArrow == null) { Debug.LogError("[BOW] Arrow instantiation FAILED."); return; }
+    
+    public bool IsDrawingNow =>
+        isDrawing;
 
-		arrowRb = currentArrow.GetComponent<Rigidbody>();
-		currentArrowController = currentArrow.GetComponent<ArrowController>();
+    public float CurrentDraw01 =>
+        currentDrawAmount;
 
-		if (currentArrowController != null)
-			currentArrowController.SetNocked(arrowSpawnPoint);
-		else if (arrowRb != null)
-			arrowRb.isKinematic = true;
-	}
+    public float CurrentDrawDistance =>
+        smoothDraw;
+private void Awake()
+    {
+        ResolveReferences();
 
-	void ComputeDraw()
-	{
-		if (activeInteractorTransform == null) return;
+        stringRb =
+            stringGrabPoint != null
+                ? stringGrabPoint
+                    .GetComponent<Rigidbody>()
+                : null;
 
-		Vector3 handWorldPos;
+        if (disableLegacyHandednessFilters)
+        {
+            DisableLegacyHandednessFilters();
+        }
+    }
 
-		if (activeHandInteractor != null && activeHandInteractor.Hand != null)
-		{
-			Pose rootPose;
-			handWorldPos = activeHandInteractor.Hand.GetRootPose(out rootPose)
-				? rootPose.position
-				: activeInteractorTransform.position;
-		}
-		else
-		{
-			handWorldPos = activeInteractorTransform.position;
-		}
+    private void Start()
+    {
+        SetStringInteractionEnabled(
+            !requireBowHeldBeforeDrawing);
+    }
 
-		// World space — nu depinde de axele bow-ului
-		Vector3 restWorldPos = stringRestPoint != null
-			? stringRestPoint.position
-			: stringGrabPoint.position;
+    private void OnEnable()
+    {
+        ResolveReferences();
+        SubscribeEvents();
+    }
 
-		// Directia de draw = opus directiei sageti, in world space
-		Vector3 drawDirection = -arrowSpawnPoint.forward;
+    private void OnDisable()
+    {
+        UnsubscribeEvents();
+        StopAllCoroutines();
+        ClearRuntimeState();
+    }
 
-		float rawDraw = Vector3.Dot(handWorldPos - restWorldPos, drawDirection);
+    private void SubscribeEvents()
+    {
+        if (bowHandInteractable != null)
+        {
+            bowHandInteractable
+                .WhenSelectingInteractorAdded.Action +=
+                OnBowHandGrabbed;
 
-		Debug.Log("[BOW] rawDraw=" + rawDraw.ToString("F3") +
-				  " drawDir=" + drawDirection +
-				  " handPos=" + handWorldPos +
-				  " restPos=" + restWorldPos);
+            bowHandInteractable
+                .WhenSelectingInteractorRemoved.Action +=
+                OnBowHandReleased;
+        }
 
-		float drawDistance = Mathf.Clamp(rawDraw, 0f, maxDrawDistance);
+        if (bowGrabInteractable != null)
+        {
+            bowGrabInteractable
+                .WhenSelectingInteractorAdded.Action +=
+                OnBowControllerGrabbed;
 
-		smoothDraw = Mathf.Lerp(smoothDraw, drawDistance, Time.deltaTime * 20f);
-		currentDrawAmount = smoothDraw / maxDrawDistance;
-		_targetDrawDistance = smoothDraw;
+            bowGrabInteractable
+                .WhenSelectingInteractorRemoved.Action +=
+                OnBowControllerReleased;
+        }
 
-		Debug.Log("[BOW] Draw=" + drawDistance.ToString("F3") +
-				  " Amount=" + currentDrawAmount.ToString("F3"));
-	}
+        if (stringInteractable != null)
+        {
+            stringInteractable
+                .WhenSelectingInteractorAdded.Action +=
+                OnStringHandGrabbed;
 
-	private float GetRawDraw(Vector3 localHand)
-	{
-		switch (drawAxis)
-		{
-			case DrawAxis.NegZ: return -localHand.z;
-			case DrawAxis.PosZ: return localHand.z;
-			case DrawAxis.NegX: return -localHand.x;
-			case DrawAxis.PosX: return localHand.x;
-			case DrawAxis.NegY: return -localHand.y;
-			case DrawAxis.PosY: return localHand.y;
-			default: return -localHand.z;
-		}
-	}
+            stringInteractable
+                .WhenSelectingInteractorRemoved.Action +=
+                OnStringHandReleased;
+        }
 
-	// ── Release ────────────────────────────────────────────────────────────
-	void ReleaseArrow()
-	{
-		isDrawing = false;
-		_targetDrawDistance = 0f;
+        if (stringGrabInteractable != null)
+        {
+            stringGrabInteractable
+                .WhenSelectingInteractorAdded.Action +=
+                OnStringControllerGrabbed;
 
-		if (currentArrow == null) { ResetString(); return; }
+            stringGrabInteractable
+                .WhenSelectingInteractorRemoved.Action +=
+                OnStringControllerReleased;
+        }
+    }
 
-		eventBridge?.OnArrowReleased();
+    private void UnsubscribeEvents()
+    {
+        if (bowHandInteractable != null)
+        {
+            bowHandInteractable
+                .WhenSelectingInteractorAdded.Action -=
+                OnBowHandGrabbed;
 
-		float force = currentDrawAmount * maxLaunchForce;
-		Debug.Log("[BOW] Launching force = " + force.ToString("F2"));
+            bowHandInteractable
+                .WhenSelectingInteractorRemoved.Action -=
+                OnBowHandReleased;
+        }
 
-		if (force < 0.5f)
-		{
-			Destroy(currentArrow);
-		}
-		else if (currentArrowController != null)
-		{
-			currentArrowController.Launch(arrowSpawnPoint.forward, force);
-		}
-		else if (arrowRb != null)
-		{
-			arrowRb.isKinematic = false;
-			arrowRb.useGravity = true;
-			arrowRb.linearVelocity = arrowSpawnPoint.forward * force;
-		}
+        if (bowGrabInteractable != null)
+        {
+            bowGrabInteractable
+                .WhenSelectingInteractorAdded.Action -=
+                OnBowControllerGrabbed;
 
-		Debug.DrawRay(arrowSpawnPoint.position, arrowSpawnPoint.forward * 3f, Color.red, 3f);
-		ResetString();
-	}
+            bowGrabInteractable
+                .WhenSelectingInteractorRemoved.Action -=
+                OnBowControllerReleased;
+        }
 
-	private void ResetString()
-	{
-		if (stringRestPoint != null)
-			stringGrabPoint.localPosition = stringRestPoint.localPosition;
-		else
-			stringGrabPoint.localPosition = Vector3.zero;
+        if (stringInteractable != null)
+        {
+            stringInteractable
+                .WhenSelectingInteractorAdded.Action -=
+                OnStringHandGrabbed;
 
-		currentArrow = null;
-		currentArrowController = null;
-		arrowRb = null;
-		currentDrawAmount = 0f;
-		smoothDraw = 0f;
-		_targetDrawDistance = 0f;
-	}
+            stringInteractable
+                .WhenSelectingInteractorRemoved.Action -=
+                OnStringHandReleased;
+        }
+
+        if (stringGrabInteractable != null)
+        {
+            stringGrabInteractable
+                .WhenSelectingInteractorAdded.Action -=
+                OnStringControllerGrabbed;
+
+            stringGrabInteractable
+                .WhenSelectingInteractorRemoved.Action -=
+                OnStringControllerReleased;
+        }
+    }
+
+    // ============================================================
+    // BOW HOLD
+    // ============================================================
+
+    private void OnBowHandGrabbed(
+        HandGrabInteractor interactor)
+    {
+        RegisterBowSelector(
+            interactor,
+            InputAuthority.Hand);
+    }
+
+    private void OnBowControllerGrabbed(
+        GrabInteractor interactor)
+    {
+        RegisterBowSelector(
+            interactor,
+            InputAuthority.Controller);
+    }
+
+    private void RegisterBowSelector(
+        Component interactor,
+        InputAuthority authority)
+    {
+        if (interactor == null)
+        {
+            return;
+        }
+
+        PlayerSide incomingSide =
+            ResolvePlayerSide(interactor);
+
+        if (
+            isBowHeld &&
+            bowHolderSide != PlayerSide.Unknown &&
+            incomingSide != PlayerSide.Unknown &&
+            incomingSide != bowHolderSide
+        )
+        {
+            RejectInteractor(interactor);
+            return;
+        }
+
+        if (!isBowHeld)
+        {
+            bowHolderSide =
+                incomingSide;
+
+            eventBridge?.OnShotStarted();
+        }
+        else if (
+            bowHolderSide ==
+                PlayerSide.Unknown &&
+            incomingSide !=
+                PlayerSide.Unknown
+        )
+        {
+            bowHolderSide =
+                incomingSide;
+        }
+
+        if (
+            authority ==
+            InputAuthority.Controller &&
+            interactor is GrabInteractor
+                controllerInteractor
+        )
+        {
+            bowControllerSelectors.Add(
+                controllerInteractor);
+
+            // Un controller fizic poate produce și un callback
+            // de tip controller-driven HandGrab. Controllerul
+            // devine autoritatea de release.
+            bowAuthority =
+                InputAuthority.Controller;
+        }
+        else if (
+            authority ==
+            InputAuthority.Hand &&
+            interactor is HandGrabInteractor
+                handInteractor
+        )
+        {
+            bowHandSelectors.Add(
+                handInteractor);
+
+            if (
+                bowAuthority ==
+                InputAuthority.None
+            )
+            {
+                bowAuthority =
+                    InputAuthority.Hand;
+            }
+        }
+
+        isBowHeld = true;
+        SetStringInteractionEnabled(true);
+    }
+
+    private void OnBowHandReleased(
+        HandGrabInteractor interactor)
+    {
+        bowHandSelectors.Remove(
+            interactor);
+
+        TryFinalizeBowRelease();
+    }
+
+    private void OnBowControllerReleased(
+        GrabInteractor interactor)
+    {
+        bowControllerSelectors.Remove(
+            interactor);
+
+        TryFinalizeBowRelease();
+    }
+
+    private void TryFinalizeBowRelease()
+    {
+        if (
+            bowAuthority ==
+                InputAuthority.Controller &&
+            bowControllerSelectors.Count > 0
+        )
+        {
+            return;
+        }
+
+        if (
+            bowAuthority ==
+                InputAuthority.Hand &&
+            bowHandSelectors.Count > 0
+        )
+        {
+            return;
+        }
+
+        if (
+            bowAuthority ==
+                InputAuthority.None &&
+            (
+                bowHandSelectors.Count > 0 ||
+                bowControllerSelectors.Count > 0
+            )
+        )
+        {
+            return;
+        }
+
+        FinalizeBowRelease();
+    }
+
+    private void FinalizeBowRelease()
+    {
+        if (!isBowHeld)
+        {
+            return;
+        }
+
+        isBowHeld = false;
+        bowHolderSide =
+            PlayerSide.Unknown;
+
+        bowAuthority =
+            InputAuthority.None;
+
+        foreach (
+            HandGrabInteractor hand in
+            bowHandSelectors.ToArray()
+        )
+        {
+            if (hand != null)
+            {
+                StartCoroutine(
+                    ForceReleaseHandNextFrame(
+                        hand));
+            }
+        }
+
+        foreach (
+            GrabInteractor controller in
+            bowControllerSelectors.ToArray()
+        )
+        {
+            if (controller != null)
+            {
+                StartCoroutine(
+                    ForceReleaseControllerNextFrame(
+                        controller));
+            }
+        }
+
+        bowHandSelectors.Clear();
+        bowControllerSelectors.Clear();
+
+        CancelCurrentDraw(
+            forceInteractorRelease: true);
+
+        if (requireBowHeldBeforeDrawing)
+        {
+            SetStringInteractionEnabled(false);
+        }
+    }
+
+    // ============================================================
+    // STRING SELECTORS
+    // ============================================================
+
+    private void OnStringHandGrabbed(
+        HandGrabInteractor interactor)
+    {
+        RegisterStringSelector(
+            interactor,
+            InputAuthority.Hand);
+    }
+
+    private void OnStringControllerGrabbed(
+        GrabInteractor interactor)
+    {
+        RegisterStringSelector(
+            interactor,
+            InputAuthority.Controller);
+    }
+
+    private void RegisterStringSelector(
+        Component interactor,
+        InputAuthority authority)
+    {
+        if (
+            interactor == null ||
+            !CanUseString(interactor)
+        )
+        {
+            RejectInteractor(interactor);
+            return;
+        }
+
+        bool wasAlreadyGrabbed =
+            isStringGrabbed;
+
+        PlayerSide incomingSide =
+            ResolvePlayerSide(interactor);
+
+        if (
+            incomingSide !=
+            PlayerSide.Unknown
+        )
+        {
+            stringUserSide =
+                incomingSide;
+        }
+
+        if (
+            authority ==
+            InputAuthority.Controller &&
+            interactor is GrabInteractor
+                controllerInteractor
+        )
+        {
+            bool firstControllerSelector =
+                stringControllerSelectors.Count == 0;
+
+            stringControllerSelectors.Add(
+                controllerInteractor);
+
+            stringAuthority =
+                InputAuthority.Controller;
+
+            activeStringController =
+                controllerInteractor;
+
+            activeControllerTrackingTransform =
+                GetControllerTrackingTransform(
+                    controllerInteractor);
+
+            if (
+                firstControllerSelector ||
+                !hasControllerDrawStart
+            )
+            {
+                if (
+                    activeControllerTrackingTransform !=
+                    null
+                )
+                {
+                    controllerDrawStartWorldPosition =
+                        activeControllerTrackingTransform
+                            .position;
+
+                    hasControllerDrawStart =
+                        true;
+
+                    Debug.Log(
+                        "[BOW][CONTROLLER] Grab accepted" +
+                        " | interactor=" +
+                        controllerInteractor.name +
+                        " | trackingTransform=" +
+                        activeControllerTrackingTransform.name +
+                        " | source=" +
+                        (
+                            controllerInteractor.Rigidbody !=
+                            null
+                                ? "Rigidbody"
+                                : "InteractorTransform"
+                        ) +
+                        " | start=" +
+                        controllerDrawStartWorldPosition
+                    );
+                }
+                else
+                {
+                    hasControllerDrawStart =
+                        false;
+
+                    Debug.LogError(
+                        "[BOW][CONTROLLER] No tracking " +
+                        "transform was found."
+                    );
+                }
+            }
+        }
+        else if (
+            authority ==
+            InputAuthority.Hand &&
+            interactor is HandGrabInteractor
+                handInteractor
+        )
+        {
+            stringHandSelectors.Add(
+                handInteractor);
+
+            if (
+                stringAuthority ==
+                InputAuthority.None
+            )
+            {
+                stringAuthority =
+                    InputAuthority.Hand;
+            }
+        }
+
+        isStringGrabbed = true;
+
+        if (stringRb != null)
+        {
+            stringRb.isKinematic = true;
+            stringRb.useGravity = false;
+        }
+
+        if (!wasAlreadyGrabbed)
+        {
+            eventBridge?.OnShotStarted();
+        }
+    }
+
+    private bool CanUseString(
+        Component interactor)
+    {
+        if (
+            requireBowHeldBeforeDrawing &&
+            !isBowHeld
+        )
+        {
+            return false;
+        }
+
+        PlayerSide incomingSide =
+            ResolvePlayerSide(interactor);
+
+        if (
+            isStringGrabbed &&
+            stringUserSide != PlayerSide.Unknown &&
+            incomingSide != PlayerSide.Unknown
+        )
+        {
+            // Permitem al doilea callback al aceleiași mâini
+            // fizice, de exemplu Grab + ControllerDrivenHand.
+            return
+                incomingSide ==
+                stringUserSide;
+        }
+
+        if (!requireOppositeHand)
+        {
+            return true;
+        }
+
+        if (
+            bowHolderSide != PlayerSide.Unknown &&
+            incomingSide != PlayerSide.Unknown
+        )
+        {
+            return
+                bowHolderSide !=
+                incomingSide;
+        }
+
+        string bowToken =
+            FindSideTokenFromCurrentBow();
+
+        string stringToken =
+            FindSideToken(
+                interactor.transform);
+
+        if (
+            !string.IsNullOrEmpty(bowToken) &&
+            !string.IsNullOrEmpty(stringToken)
+        )
+        {
+            return
+                !string.Equals(
+                    bowToken,
+                    stringToken,
+                    StringComparison.OrdinalIgnoreCase);
+        }
+
+        return true;
+    }
+
+    private void OnStringHandReleased(
+        HandGrabInteractor interactor)
+    {
+        stringHandSelectors.Remove(
+            interactor);
+
+        TryCompleteStringRelease();
+    }
+
+    private void OnStringControllerReleased(
+        GrabInteractor interactor)
+    {
+        stringControllerSelectors.Remove(
+            interactor);
+
+        TryCompleteStringRelease();
+    }
+
+    private void TryCompleteStringRelease()
+    {
+        if (
+            stringAuthority ==
+                InputAuthority.Controller &&
+            stringControllerSelectors.Count > 0
+        )
+        {
+            return;
+        }
+
+        if (
+            stringAuthority ==
+                InputAuthority.Hand &&
+            stringHandSelectors.Count > 0
+        )
+        {
+            return;
+        }
+
+        if (
+            stringAuthority ==
+                InputAuthority.None &&
+            (
+                stringHandSelectors.Count > 0 ||
+                stringControllerSelectors.Count > 0
+            )
+        )
+        {
+            return;
+        }
+
+        CompleteStringRelease();
+    }
+
+    private void CompleteStringRelease()
+    {
+        if (!isStringGrabbed)
+        {
+            return;
+        }
+
+        isStringGrabbed = false;
+        stringAuthority =
+            InputAuthority.None;
+
+        stringUserSide =
+            PlayerSide.Unknown;
+
+        // Eliminăm eventualul selector duplicat de tip
+        // controller-driven hand care a rămas activ.
+        foreach (
+            HandGrabInteractor hand in
+            stringHandSelectors.ToArray()
+        )
+        {
+            if (hand != null)
+            {
+                StartCoroutine(
+                    ForceReleaseHandNextFrame(
+                        hand));
+            }
+        }
+
+        foreach (
+            GrabInteractor controller in
+            stringControllerSelectors.ToArray()
+        )
+        {
+            if (controller != null)
+            {
+                StartCoroutine(
+                    ForceReleaseControllerNextFrame(
+                        controller));
+            }
+        }
+
+        stringHandSelectors.Clear();
+        stringControllerSelectors.Clear();
+
+        activeStringController = null;
+        activeControllerTrackingTransform = null;
+        hasControllerDrawStart = false;
+    }
+
+    // ============================================================
+    // FRAME UPDATE
+    // ============================================================
+
+    private void Update()
+    {
+        PruneSelectors();
+
+        if (
+            requireBowHeldBeforeDrawing &&
+            !isBowHeld
+        )
+        {
+            if (
+                isDrawing ||
+                isStringGrabbed
+            )
+            {
+                CancelCurrentDraw(
+                    forceInteractorRelease: true);
+            }
+
+            return;
+        }
+
+        if (isStringGrabbed)
+        {
+            if (!isDrawing)
+            {
+                StartDraw();
+            }
+
+            ComputeDraw();
+        }
+        else if (isDrawing)
+        {
+            ReleaseArrow();
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (!isDrawing)
+        {
+            return;
+        }
+
+        if (
+            stringRestPoint != null &&
+            arrowSpawnPoint != null
+        )
+        {
+            stringGrabPoint.position =
+                stringRestPoint.position +
+                (-arrowSpawnPoint.forward) *
+                targetDrawDistance;
+        }
+
+        if (currentArrow != null)
+        {
+            currentArrow.transform.position =
+                stringGrabPoint.position;
+
+            currentArrow.transform.rotation =
+                arrowSpawnPoint.rotation;
+        }
+    }
+
+    private void PruneSelectors()
+    {
+        if (bowHandInteractable != null)
+        {
+            bowHandSelectors.RemoveWhere(
+                item =>
+                    item == null ||
+                    !bowHandInteractable
+                        .SelectingInteractors
+                        .Any(
+                            selected =>
+                                selected == item));
+        }
+
+        if (bowGrabInteractable != null)
+        {
+            bowControllerSelectors.RemoveWhere(
+                item =>
+                    item == null ||
+                    !bowGrabInteractable
+                        .SelectingInteractors
+                        .Any(
+                            selected =>
+                                selected == item));
+        }
+
+        if (stringInteractable != null)
+        {
+            stringHandSelectors.RemoveWhere(
+                item =>
+                    item == null ||
+                    !stringInteractable
+                        .SelectingInteractors
+                        .Any(
+                            selected =>
+                                selected == item));
+        }
+
+        if (stringGrabInteractable != null)
+        {
+            stringControllerSelectors.RemoveWhere(
+                item =>
+                    item == null ||
+                    !stringGrabInteractable
+                        .SelectingInteractors
+                        .Any(
+                            selected =>
+                                selected == item));
+        }
+
+        if (isBowHeld)
+        {
+            TryFinalizeBowRelease();
+        }
+
+        if (isStringGrabbed)
+        {
+            TryCompleteStringRelease();
+        }
+    }
+
+    // ============================================================
+    // DRAW AND ARROW
+    // ============================================================
+
+    private void StartDraw()
+    {
+        if (
+            requireBowHeldBeforeDrawing &&
+            !isBowHeld
+        )
+        {
+            return;
+        }
+
+        isDrawing = true;
+
+        smoothDraw = 0f;
+        targetDrawDistance = 0f;
+        currentDrawAmount = 0f;
+
+        currentArrow =
+            Instantiate(
+                arrowPrefab,
+                arrowSpawnPoint.position,
+                arrowSpawnPoint.rotation);
+
+        if (currentArrow == null)
+        {
+            isDrawing = false;
+            return;
+        }
+
+        arrowRb =
+            currentArrow
+                .GetComponent<Rigidbody>();
+
+        currentArrowController =
+            currentArrow
+                .GetComponent<ArrowController>();
+
+        if (currentArrowController != null)
+        {
+            currentArrowController.SetNocked(
+                arrowSpawnPoint);
+        }
+        else if (arrowRb != null)
+        {
+            arrowRb.isKinematic = true;
+        }
+    }
+
+    private void ComputeDraw()
+    {
+        Transform interactionTransform =
+            GetPreferredStringInteractorTransform();
+
+        if (interactionTransform == null)
+        {
+            return;
+        }
+
+        Vector3 interactionWorldPosition =
+            interactionTransform.position;
+
+        HandGrabInteractor activeHand =
+            stringHandSelectors
+                .FirstOrDefault(
+                    item =>
+                        item != null &&
+                        item.Hand != null);
+
+        if (
+            stringAuthority !=
+                InputAuthority.Controller &&
+            activeHand != null
+        )
+        {
+            Pose rootPose;
+
+            if (
+                activeHand.Hand.GetRootPose(
+                    out rootPose)
+            )
+            {
+                interactionWorldPosition =
+                    rootPose.position;
+            }
+        }
+
+        Vector3 restWorldPosition =
+            stringRestPoint != null
+                ? stringRestPoint.position
+                : stringGrabPoint.position;
+
+        Vector3 drawDirection =
+            -arrowSpawnPoint.forward;
+
+        float rawDraw;
+
+        if (
+            stringAuthority ==
+                InputAuthority.Controller &&
+            hasControllerDrawStart
+        )
+        {
+            Vector3 controllerMovement =
+                interactionWorldPosition -
+                controllerDrawStartWorldPosition;
+
+            rawDraw =
+                Vector3.Dot(
+                    controllerMovement,
+                    drawDirection);
+
+            rawDraw *=
+                controllerDrawMultiplier;
+
+            if (rawDraw > 0f)
+            {
+                rawDraw =
+                    Mathf.Max(
+                        0f,
+                        rawDraw -
+                        controllerDrawDeadZone);
+            }
+
+            if (Time.frameCount % 10 == 0)
+            {
+                Debug.Log(
+                    "[BOW][CONTROLLER] rawDraw=" +
+                    rawDraw.ToString("F4") +
+                    " | movement=" +
+                    controllerMovement +
+                    " | current=" +
+                    interactionWorldPosition +
+                    " | start=" +
+                    controllerDrawStartWorldPosition +
+                    " | tracking=" +
+                    interactionTransform.name +
+                    " | drawDirection=" +
+                    drawDirection
+                );
+            }
+        }
+        else
+        {
+            rawDraw =
+                Vector3.Dot(
+                    interactionWorldPosition -
+                    restWorldPosition,
+                    drawDirection);
+        }
+
+        float drawDistance =
+            Mathf.Clamp(
+                rawDraw,
+                0f,
+                maxDrawDistance);
+
+        smoothDraw =
+            Mathf.Lerp(
+                smoothDraw,
+                drawDistance,
+                Time.deltaTime *
+                drawSmoothingSpeed);
+
+        currentDrawAmount =
+            maxDrawDistance > 0.0001f
+                ? smoothDraw /
+                    maxDrawDistance
+                : 0f;
+
+        targetDrawDistance =
+            smoothDraw;
+    }
+
+    private Transform GetPreferredStringInteractorTransform()
+    {
+        // Pentru controller folosim transformul corpului fizic
+        // urmarit de GrabInteractor, nu GameObject-ul container.
+        if (
+            stringAuthority ==
+            InputAuthority.Controller
+        )
+        {
+            GrabInteractor controller =
+                activeStringController != null
+                    ? activeStringController
+                    : stringControllerSelectors
+                        .FirstOrDefault(
+                            item => item != null);
+
+            Transform controllerTrackingTransform =
+                GetControllerTrackingTransform(
+                    controller);
+
+            if (controllerTrackingTransform != null)
+            {
+                activeControllerTrackingTransform =
+                    controllerTrackingTransform;
+
+                return controllerTrackingTransform;
+            }
+        }
+
+        HandGrabInteractor hand =
+            stringHandSelectors
+                .FirstOrDefault(
+                    item => item != null);
+
+        if (hand != null)
+        {
+            return hand.transform;
+        }
+
+        GrabInteractor fallbackController =
+            stringControllerSelectors
+                .FirstOrDefault(
+                    item => item != null);
+
+        return GetControllerTrackingTransform(
+            fallbackController);
+    }
+
+    private Transform GetControllerTrackingTransform(
+        GrabInteractor controller)
+    {
+        if (controller == null)
+        {
+            return null;
+        }
+
+        if (controller.Rigidbody != null)
+        {
+            return controller.Rigidbody.transform;
+        }
+
+        return controller.transform;
+    }
+
+    private void ReleaseArrow()
+    {
+        isDrawing = false;
+        targetDrawDistance = 0f;
+
+        if (currentArrow == null)
+        {
+            ResetString();
+            return;
+        }
+
+        if (
+            requireBowHeldBeforeDrawing &&
+            !isBowHeld
+        )
+        {
+            Destroy(currentArrow);
+            ResetString();
+            return;
+        }
+
+        eventBridge?.OnArrowReleased();
+
+        float force =
+            currentDrawAmount *
+            maxLaunchForce;
+
+        Debug.Log(
+            "[BOW] Release" +
+            " | draw01=" +
+            currentDrawAmount.ToString("F4") +
+            " | drawDistance=" +
+            smoothDraw.ToString("F4") +
+            " | force=" +
+            force.ToString("F2")
+        );
+
+        if (force < 0.5f)
+        {
+            Destroy(currentArrow);
+        }
+        else if (currentArrowController != null)
+        {
+            currentArrowController.Launch(
+                arrowSpawnPoint.forward,
+                force);
+        }
+        else if (arrowRb != null)
+        {
+            arrowRb.isKinematic = false;
+            arrowRb.useGravity = true;
+
+            arrowRb.linearVelocity =
+                arrowSpawnPoint.forward *
+                force;
+        }
+
+        ResetString();
+    }
+
+    // ============================================================
+    // CANCEL / RESET
+    // ============================================================
+
+    private void CancelCurrentDraw(
+        bool forceInteractorRelease)
+    {
+        isCancellingDraw = true;
+
+        HandGrabInteractor[] hands =
+            stringHandSelectors.ToArray();
+
+        GrabInteractor[] controllers =
+            stringControllerSelectors.ToArray();
+
+        isStringGrabbed = false;
+        isDrawing = false;
+
+        stringAuthority =
+            InputAuthority.None;
+
+        stringUserSide =
+            PlayerSide.Unknown;
+
+        stringHandSelectors.Clear();
+        stringControllerSelectors.Clear();
+
+        activeStringController = null;
+        activeControllerTrackingTransform = null;
+        hasControllerDrawStart = false;
+
+        if (currentArrow != null)
+        {
+            Destroy(currentArrow);
+        }
+
+        ResetString();
+
+        if (forceInteractorRelease)
+        {
+            foreach (
+                HandGrabInteractor hand in
+                hands
+            )
+            {
+                if (hand != null)
+                {
+                    StartCoroutine(
+                        ForceReleaseHandNextFrame(
+                            hand));
+                }
+            }
+
+            foreach (
+                GrabInteractor controller in
+                controllers
+            )
+            {
+                if (controller != null)
+                {
+                    StartCoroutine(
+                        ForceReleaseControllerNextFrame(
+                            controller));
+                }
+            }
+        }
+
+        isCancellingDraw = false;
+    }
+
+    private void ResetString()
+    {
+        if (
+            stringGrabPoint != null &&
+            stringRestPoint != null
+        )
+        {
+            stringGrabPoint.localPosition =
+                stringRestPoint.localPosition;
+
+            stringGrabPoint.localRotation =
+                stringRestPoint.localRotation;
+        }
+
+        currentArrow = null;
+        currentArrowController = null;
+        arrowRb = null;
+
+        currentDrawAmount = 0f;
+        smoothDraw = 0f;
+        targetDrawDistance = 0f;
+    }
+
+    private void ClearRuntimeState()
+    {
+        isBowHeld = false;
+        bowHolderSide =
+            PlayerSide.Unknown;
+
+        bowAuthority =
+            InputAuthority.None;
+
+        bowHandSelectors.Clear();
+        bowControllerSelectors.Clear();
+
+        isDrawing = false;
+        isStringGrabbed = false;
+        isCancellingDraw = false;
+
+        stringAuthority =
+            InputAuthority.None;
+
+        stringUserSide =
+            PlayerSide.Unknown;
+
+        stringHandSelectors.Clear();
+        stringControllerSelectors.Clear();
+
+        activeStringController = null;
+        activeControllerTrackingTransform = null;
+        hasControllerDrawStart = false;
+
+        currentArrow = null;
+        currentArrowController = null;
+        arrowRb = null;
+    }
+
+    // ============================================================
+    // INTERACTION UTILITIES
+    // ============================================================
+
+    private void SetStringInteractionEnabled(
+        bool state)
+    {
+        if (stringInteractable != null)
+        {
+            stringInteractable.enabled =
+                state;
+        }
+
+        if (stringGrabInteractable != null)
+        {
+            stringGrabInteractable.enabled =
+                state;
+        }
+    }
+
+    private IEnumerator ForceReleaseHandNextFrame(
+        HandGrabInteractor interactor)
+    {
+        yield return null;
+
+        if (interactor != null)
+        {
+            interactor.ForceRelease();
+        }
+    }
+
+    private IEnumerator
+        ForceReleaseControllerNextFrame(
+            GrabInteractor interactor)
+    {
+        yield return null;
+
+        if (interactor != null)
+        {
+            interactor.ForceRelease();
+        }
+    }
+
+    private void RejectInteractor(
+        Component interactor)
+    {
+        if (
+            interactor is
+            HandGrabInteractor hand
+        )
+        {
+            StartCoroutine(
+                ForceReleaseHandNextFrame(
+                    hand));
+        }
+        else if (
+            interactor is
+            GrabInteractor controller
+        )
+        {
+            StartCoroutine(
+                ForceReleaseControllerNextFrame(
+                    controller));
+        }
+    }
+
+    // ============================================================
+    // HANDEDNESS
+    // ============================================================
+
+    private PlayerSide ResolvePlayerSide(
+        Component interactor)
+    {
+        if (interactor == null)
+        {
+            return PlayerSide.Unknown;
+        }
+
+        if (
+            interactor is
+                HandGrabInteractor handInteractor &&
+            handInteractor.Hand != null
+        )
+        {
+            PlayerSide directHandSide =
+                ParseSide(
+                    handInteractor
+                        .Hand
+                        .Handedness
+                        .ToString());
+
+            if (
+                directHandSide !=
+                PlayerSide.Unknown
+            )
+            {
+                return directHandSide;
+            }
+        }
+
+        Transform current =
+            interactor.transform;
+
+        while (current != null)
+        {
+            PlayerSide nameSide =
+                ParseSide(current.name);
+
+            if (
+                nameSide !=
+                PlayerSide.Unknown
+            )
+            {
+                return nameSide;
+            }
+
+            foreach (
+                Component component in
+                current.GetComponents<Component>()
+            )
+            {
+                PlayerSide reflectedSide =
+                    TryReadHandedness(
+                        component);
+
+                if (
+                    reflectedSide !=
+                    PlayerSide.Unknown
+                )
+                {
+                    return reflectedSide;
+                }
+            }
+
+            current = current.parent;
+        }
+
+        Camera camera =
+            Camera.main;
+
+        if (camera != null)
+        {
+            float lateral =
+                Vector3.Dot(
+                    interactor.transform.position -
+                    camera.transform.position,
+                    camera.transform.right);
+
+            if (Mathf.Abs(lateral) > 0.025f)
+            {
+                return lateral < 0f
+                    ? PlayerSide.Left
+                    : PlayerSide.Right;
+            }
+        }
+
+        return PlayerSide.Unknown;
+    }
+
+    private PlayerSide TryReadHandedness(
+        Component component)
+    {
+        if (component == null)
+        {
+            return PlayerSide.Unknown;
+        }
+
+        try
+        {
+            Type type =
+                component.GetType();
+
+            BindingFlags flags =
+                BindingFlags.Instance |
+                BindingFlags.Public |
+                BindingFlags.NonPublic;
+
+            foreach (
+                string propertyName in
+                new[]
+                {
+                    "Handedness",
+                    "handedness"
+                }
+            )
+            {
+                PropertyInfo property =
+                    type.GetProperty(
+                        propertyName,
+                        flags);
+
+                if (
+                    property != null &&
+                    property
+                        .GetIndexParameters()
+                        .Length == 0
+                )
+                {
+                    PlayerSide side =
+                        ParseSide(
+                            property
+                                .GetValue(component)
+                                ?.ToString());
+
+                    if (
+                        side !=
+                        PlayerSide.Unknown
+                    )
+                    {
+                        return side;
+                    }
+                }
+            }
+
+            foreach (
+                string fieldName in
+                new[]
+                {
+                    "Handedness",
+                    "handedness",
+                    "_handedness"
+                }
+            )
+            {
+                FieldInfo field =
+                    type.GetField(
+                        fieldName,
+                        flags);
+
+                if (field != null)
+                {
+                    PlayerSide side =
+                        ParseSide(
+                            field
+                                .GetValue(component)
+                                ?.ToString());
+
+                    if (
+                        side !=
+                        PlayerSide.Unknown
+                    )
+                    {
+                        return side;
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // Continuăm cu fallback-urile.
+        }
+
+        return PlayerSide.Unknown;
+    }
+
+    private PlayerSide ParseSide(
+        string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return PlayerSide.Unknown;
+        }
+
+        string lower =
+            value.ToLowerInvariant();
+
+        if (lower.Contains("left"))
+        {
+            return PlayerSide.Left;
+        }
+
+        if (lower.Contains("right"))
+        {
+            return PlayerSide.Right;
+        }
+
+        return PlayerSide.Unknown;
+    }
+
+    private string FindSideTokenFromCurrentBow()
+    {
+        foreach (
+            GrabInteractor controller in
+            bowControllerSelectors
+        )
+        {
+            string token =
+                FindSideToken(
+                    controller != null
+                        ? controller.transform
+                        : null);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                return token;
+            }
+        }
+
+        foreach (
+            HandGrabInteractor hand in
+            bowHandSelectors
+        )
+        {
+            string token =
+                FindSideToken(
+                    hand != null
+                        ? hand.transform
+                        : null);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                return token;
+            }
+        }
+
+        return null;
+    }
+
+    private string FindSideToken(
+        Transform source)
+    {
+        Transform current =
+            source;
+
+        while (current != null)
+        {
+            string lower =
+                current.name.ToLowerInvariant();
+
+            if (lower.Contains("left"))
+            {
+                return "left";
+            }
+
+            if (lower.Contains("right"))
+            {
+                return "right";
+            }
+
+            current = current.parent;
+        }
+
+        return null;
+    }
+
+    // ============================================================
+    // REFERENCES
+    // ============================================================
+
+    private void ResolveReferences()
+    {
+        if (bowHandInteractable == null)
+        {
+            bowHandInteractable =
+                GetComponent<HandGrabInteractable>();
+        }
+
+        if (bowGrabInteractable == null)
+        {
+            bowGrabInteractable =
+                GetComponent<GrabInteractable>();
+        }
+
+        if (
+            stringGrabPoint != null &&
+            stringInteractable == null
+        )
+        {
+            stringInteractable =
+                stringGrabPoint
+                    .GetComponent<HandGrabInteractable>();
+        }
+
+        if (
+            stringGrabPoint != null &&
+            stringGrabInteractable == null
+        )
+        {
+            stringGrabInteractable =
+                stringGrabPoint
+                    .GetComponent<GrabInteractable>();
+        }
+    }
+
+    private void DisableLegacyHandednessFilters()
+    {
+        foreach (
+            Behaviour behaviour in
+            GetComponentsInChildren<Behaviour>(true)
+        )
+        {
+            if (
+                behaviour != null &&
+                behaviour
+                    .GetType()
+                    .Name ==
+                "HandednessFilter"
+            )
+            {
+                behaviour.enabled =
+                    false;
+            }
+        }
+    }
 }
+

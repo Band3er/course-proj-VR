@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c7d6ea99b62a7b4d9b6ebf9c451955d, type: 3}
+  m_Name: BirdDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::ForestArchery.Wildlife.WildlifeSpeciesDefinition
+  speciesId: bird
+  displayName: Bird
+  movementMode: 1
+  gameplayPrefab: {fileID: 0}
+  maxAlive: 6
+  poolSize: 10
+  spawnWeight: 0.65
+  baseScore: 150
+  headshotMultiplier: 1.5
+  movingScoreMultiplier: 1.25
+  airborneScoreMultiplier: 1.4
+  idleDurationRange: {x: 1.5, y: 4}
+  movementSpeedRange: {x: 2.4, y: 3.3}
+  roamDistanceRange: {x: 3, y: 7}
+  angularSpeed: 720
+  acceleration: 14
+  stoppingDistance: 0.12
+  fleeDistance: 2.75
+  activeLifetimeRange: {x: 28, y: 48}
+  idleStateName: Idle
+  runningStateName: Run
+  deathStateName: die
+  hasDeathAnimation: 1
+  corpseLifetime: 45
+  fallbackDeathEuler: {x: 0, y: 0, z: 90}
+  fallbackDeathOffset: {x: 0, y: 0, z: 0}
+  fallbackDeathDuration: 0.55

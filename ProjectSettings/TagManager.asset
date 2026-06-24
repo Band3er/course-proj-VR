@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - Target
+  - lb_groundTarget
+  - lb_perchTarget
   layers:
   - Default
   - TransparentFX

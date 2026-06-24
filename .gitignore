@@ -107,3 +107,29 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Forest Archery generated/local files
+/Library/
+/Temp/
+/Obj/
+/Logs/
+/UserSettings/
+/Build/
+/Builds/
+*.keystore
+*.jks
+
+# Forest Archery local/generated files
+
+# Internal snapshots and temporary reports
+/Assets/_Baseline/
+/Assets/_Baseline.meta
+/Assets/_Recovery/
+/Assets/_Recovery.meta
+*.backup_*
+/Assets/_Project/ComplianceAudit/Reports/
+/Assets/_Project/ComplianceAudit/Reports.meta
+/Assets/_Project/TimedGameAudit/Reports/
+/Assets/_Project/TimedGameAudit/Reports.meta
+/BowInteractionAudit.txt
+/RESTORED_FROM_STAGE08F1_BASELINE.txt
