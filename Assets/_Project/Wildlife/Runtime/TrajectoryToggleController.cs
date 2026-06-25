@@ -1,11 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-#if ENABLE_INPUT_SYSTEM
-using UnityEngine.InputSystem;
-#endif
-
-public sealed class TrajectoryToggleController : MonoBehaviour
+public sealed class TrajectoryToggleController :
+    MonoBehaviour
 {
     [Header("References")]
     [SerializeField]
@@ -43,21 +40,38 @@ public sealed class TrajectoryToggleController : MonoBehaviour
         Image configuredBackground,
         Button configuredButton)
     {
-        trajectoryPreview = preview;
-        statusText = configuredStatusText;
-        hintText = configuredHintText;
-        backgroundImage = configuredBackground;
-        uiButton = configuredButton;
+        trajectoryPreview =
+            preview;
 
-        if (uiButton != null)
-        {
-            uiButton.onClick.RemoveAllListeners();
-            uiButton.onClick.AddListener(
-                ToggleTrajectory);
-        }
+        statusText =
+            configuredStatusText;
+
+        hintText =
+            configuredHintText;
+
+        backgroundImage =
+            configuredBackground;
+
+        uiButton =
+            configuredButton;
+
+        BindUiButton();
+        HideInputHint();
 
         SetTrajectoryEnabled(
             trajectoryEnabledOnStart);
+    }
+
+    private void Awake()
+    {
+        BindUiButton();
+        HideInputHint();
+    }
+
+    private void OnEnable()
+    {
+        BindUiButton();
+        HideInputHint();
     }
 
     private void Start()
@@ -69,43 +83,19 @@ public sealed class TrajectoryToggleController : MonoBehaviour
                     <ArrowTrajectoryPreview>();
         }
 
+        BindUiButton();
+        HideInputHint();
+
         SetTrajectoryEnabled(
             trajectoryEnabledOnStart);
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        if (
-            Time.unscaledTime <
-            nextAcceptedInputTime
-        )
+        if (uiButton != null)
         {
-            return;
-        }
-
-        bool keyboardToggle = false;
-
-#if ENABLE_INPUT_SYSTEM
-        keyboardToggle =
-            Keyboard.current != null &&
-            Keyboard.current.tKey.wasPressedThisFrame;
-#elif ENABLE_LEGACY_INPUT_MANAGER
-        keyboardToggle =
-            Input.GetKeyDown(KeyCode.T);
-#endif
-
-        bool controllerToggle =
-            OVRInput.GetDown(
-                OVRInput.RawButton.LThumbstick) ||
-            OVRInput.GetDown(
-                OVRInput.RawButton.RThumbstick);
-
-        if (
-            keyboardToggle ||
-            controllerToggle
-        )
-        {
-            ToggleTrajectory();
+            uiButton.onClick.RemoveListener(
+                ToggleTrajectory);
         }
     }
 
@@ -123,7 +113,8 @@ public sealed class TrajectoryToggleController : MonoBehaviour
             trajectoryPreview == null ||
             !trajectoryPreview.TrajectoryEnabled;
 
-        SetTrajectoryEnabled(nextState);
+        SetTrajectoryEnabled(
+            nextState);
 
         nextAcceptedInputTime =
             Time.unscaledTime +
@@ -136,14 +127,56 @@ public sealed class TrajectoryToggleController : MonoBehaviour
         if (trajectoryPreview != null)
         {
             trajectoryPreview
-                .SetTrajectoryEnabled(enabled);
+                .SetTrajectoryEnabled(
+                    enabled);
         }
 
-        UpdateVisualState(enabled);
+        UpdateVisualState(
+            enabled);
+
+        HideInputHint();
 
         Debug.Log(
             "[AIM ASSIST] Trajectory " +
-            (enabled ? "ENABLED" : "DISABLED"));
+            (
+                enabled
+                    ? "ENABLED"
+                    : "DISABLED"
+            ));
+    }
+
+    private void BindUiButton()
+    {
+        if (uiButton == null)
+        {
+            return;
+        }
+
+        uiButton.interactable =
+            true;
+
+        uiButton.onClick.RemoveListener(
+            ToggleTrajectory);
+
+        uiButton.onClick.AddListener(
+            ToggleTrajectory);
+    }
+
+    private void HideInputHint()
+    {
+        if (hintText == null)
+        {
+            return;
+        }
+
+        hintText.text =
+            string.Empty;
+
+        if (hintText.gameObject.activeSelf)
+        {
+            hintText.gameObject.SetActive(
+                false);
+        }
     }
 
     private void UpdateVisualState(
@@ -168,12 +201,6 @@ public sealed class TrajectoryToggleController : MonoBehaviour
                         0.76f,
                         0.82f,
                         1f);
-        }
-
-        if (hintText != null)
-        {
-            hintText.text =
-                "PRESS EITHER THUMBSTICK";
         }
 
         if (backgroundImage != null)

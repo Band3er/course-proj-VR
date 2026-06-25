@@ -287,10 +287,13 @@ namespace ForestArchery.TimedGame
                     : "Recorded";
 
             interactionMode =
-                roundController
-                    .Session
-                    .InteractionMode
-                    .ToString();
+                menuController != null &&
+                menuController.CurrentRoundIsPractice
+                    ? "FreePlay"
+                    : roundController
+                        .Session
+                        .InteractionMode
+                        .ToString();
 
             conditionIndex++;
 

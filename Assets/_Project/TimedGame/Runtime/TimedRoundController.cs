@@ -12,6 +12,10 @@ namespace ForestArchery.TimedGame
         [SerializeField, Min(0f)]
         private float countdownSeconds = 3f;
 
+        // FOREST_ARCHERY_UNLIMITED_TRAINING_STAGE10D
+        [SerializeField]
+        private bool unlimitedRound;
+
         [Header("Development")]
         [SerializeField]
         private bool verboseLogging = true;
@@ -32,6 +36,9 @@ namespace ForestArchery.TimedGame
 
         public float CountdownSeconds =>
             countdownSeconds;
+
+        public bool IsUnlimitedRound =>
+            unlimitedRound;
 
         public TimedRoundState State =>
             Session.State;
@@ -64,10 +71,28 @@ namespace ForestArchery.TimedGame
             float configuredRoundDurationSeconds,
             float configuredCountdownSeconds)
         {
+            unlimitedRound =
+                false;
+
             roundDurationSeconds =
                 Mathf.Max(
                     1f,
                     configuredRoundDurationSeconds);
+
+            countdownSeconds =
+                Mathf.Max(
+                    0f,
+                    configuredCountdownSeconds);
+        }
+
+        public void ConfigureUnlimitedRound(
+            float configuredCountdownSeconds)
+        {
+            unlimitedRound =
+                true;
+
+            roundDurationSeconds =
+                0f;
 
             countdownSeconds =
                 Mathf.Max(
@@ -83,7 +108,8 @@ namespace ForestArchery.TimedGame
                 profileId,
                 mode,
                 roundDurationSeconds,
-                countdownSeconds);
+                countdownSeconds,
+                unlimitedRound);
         }
 
         public void RegisterArrowLaunched()

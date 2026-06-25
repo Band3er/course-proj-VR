@@ -133,3 +133,9 @@ InitTestScene*.unity*
 /Assets/_Project/TimedGameAudit/Reports.meta
 /BowInteractionAudit.txt
 /RESTORED_FROM_STAGE08F1_BASELINE.txt
+
+Course_Project_Vr_BurstDebugInformation_DoNotShip/
+
+*_BurstDebugInformation_DoNotShip/
+
+*_BackUpThisFolder_ButDontShipItWithYourGame/

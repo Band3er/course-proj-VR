@@ -331,12 +331,14 @@ namespace ForestArchery.TimedGame
             BindVirtualKeyboard();
         }
 
+        // FOREST_ARCHERY_DIRECT_FREE_PLAY_STAGE10E
         public void ShowPracticeModeSelection()
         {
             pendingPracticeRound =
                 true;
 
-            ShowModeSelection();
+            StartRound(
+                TimedGameInteractionMode.Controller);
         }
 
         public void ShowRecordedModeSelection()
@@ -367,10 +369,10 @@ namespace ForestArchery.TimedGame
             modePlayerText.text =
                 (
                     pendingPracticeRound
-                        ? "PRACTICE - 01:00"
-                        : "RECORDED ROUND - 05:00"
+                        ? "TRAINING - FREE PLAY"
+                        : "HUNTING CHALLENGE - 05:00"
                 ) +
-                "\nPLAYER: " +
+                "\nARCHER: " +
                 selectedProfile.displayName;
 
             controllerBestText.text =
@@ -885,10 +887,12 @@ namespace ForestArchery.TimedGame
                 true);
 
             timerText.text =
-                FormatTime(
-                    Mathf.CeilToInt(
-                        roundController
-                            .RoundDurationSeconds));
+                pendingPracticeRound
+                    ? "FREE PLAY"
+                    : FormatTime(
+                        Mathf.CeilToInt(
+                            roundController
+                                .RoundDurationSeconds));
 
             roundMessageText.text =
                 "GET READY";
@@ -896,14 +900,17 @@ namespace ForestArchery.TimedGame
             hideRoundMessageAt =
                 -1f;
 
-            float configuredDurationSeconds =
-                pendingPracticeRound
-                    ? 60f
-                    : 300f;
-
-            roundController.ConfigureDurations(
-                configuredDurationSeconds,
-                3f);
+            if (pendingPracticeRound)
+            {
+                roundController.ConfigureUnlimitedRound(
+                    0f);
+            }
+            else
+            {
+                roundController.ConfigureDurations(
+                    300f,
+                    3f);
+            }
 
             roundController.StartRound(
                 profile.profileId,
@@ -980,8 +987,15 @@ namespace ForestArchery.TimedGame
             int wholeSeconds)
         {
             timerText.text =
-                FormatTime(
-                    wholeSeconds);
+                (
+                    pendingPracticeRound &&
+                    roundController.IsUnlimitedRound
+                )
+                    ? "FREE PLAY"
+                    : FormatTime(
+                        Mathf.Max(
+                            0,
+                            wholeSeconds));
         }
 
         private void HandleRoundMessage(
@@ -1098,8 +1112,8 @@ namespace ForestArchery.TimedGame
 
             string bestLine =
                 lastRoundWasPractice
-                    ? "PRACTICE RESULT\n" +
-                        "NOT SAVED TO PERSONAL BEST OR LEADERBOARD"
+                    ? "TRAINING RESULT\n" +
+                        "READY FOR THE HUNTING CHALLENGE"
                     : (
                         lastRoundWasPersonalBest
                             ? "NEW PERSONAL BEST!\n" +
@@ -1120,8 +1134,8 @@ namespace ForestArchery.TimedGame
             resultsSummaryText.text =
                 (
                     lastRoundWasPractice
-                        ? "PRACTICE COMPLETE\n\n"
-                        : "RECORDED ROUND COMPLETE\n\n"
+                        ? "TRAINING COMPLETE\n\n"
+                        : "HUNTING CHALLENGE COMPLETE\n\n"
                 ) +
                 "PLAYER: " +
                 playerName +

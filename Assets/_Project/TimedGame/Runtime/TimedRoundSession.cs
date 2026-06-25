@@ -30,8 +30,10 @@ namespace ForestArchery.TimedGame
         private TimedGameInteractionMode interactionMode =
             TimedGameInteractionMode.Controller;
 
+        // FOREST_ARCHERY_UNLIMITED_TRAINING_STAGE10D
         private float configuredDurationSeconds;
         private float remainingSeconds;
+        private bool unlimitedDuration;
         private float countdownRemainingSeconds;
 
         private int currentScore;
@@ -42,11 +44,15 @@ namespace ForestArchery.TimedGame
         public string ProfileId => profileId;
         public TimedGameInteractionMode InteractionMode => interactionMode;
         public float RemainingSeconds => remainingSeconds;
+        public bool IsUnlimitedDuration => unlimitedDuration;
+
         public int RemainingWholeSeconds =>
-            Mathf.Max(
-                0,
-                Mathf.CeilToInt(
-                    remainingSeconds));
+            unlimitedDuration
+                ? -1
+                : Mathf.Max(
+                    0,
+                    Mathf.CeilToInt(
+                        remainingSeconds));
 
         public int CurrentScore => currentScore;
         public int CurrentHits => currentHits;
@@ -71,7 +77,8 @@ namespace ForestArchery.TimedGame
             string requestedProfileId,
             TimedGameInteractionMode requestedMode,
             float durationSeconds = 300f,
-            float countdownSeconds = 3f)
+            float countdownSeconds = 3f,
+            bool unlimited = false)
         {
             if (
                 string.IsNullOrWhiteSpace(
@@ -83,7 +90,10 @@ namespace ForestArchery.TimedGame
                     nameof(requestedProfileId));
             }
 
-            if (durationSeconds <= 0f)
+            if (
+                !unlimited &&
+                durationSeconds <= 0f
+            )
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(durationSeconds),
@@ -103,11 +113,18 @@ namespace ForestArchery.TimedGame
             interactionMode =
                 requestedMode;
 
+            unlimitedDuration =
+                unlimited;
+
             configuredDurationSeconds =
-                durationSeconds;
+                unlimitedDuration
+                    ? 0f
+                    : durationSeconds;
 
             remainingSeconds =
-                durationSeconds;
+                unlimitedDuration
+                    ? 0f
+                    : durationSeconds;
 
             countdownRemainingSeconds =
                 countdownSeconds;
@@ -316,7 +333,9 @@ namespace ForestArchery.TimedGame
         private void StartPlaying()
         {
             remainingSeconds =
-                configuredDurationSeconds;
+                unlimitedDuration
+                    ? 0f
+                    : configuredDurationSeconds;
 
             SetState(
                 TimedRoundState.Playing);
@@ -333,6 +352,11 @@ namespace ForestArchery.TimedGame
         private void TickPlaying(
             float deltaTime)
         {
+            if (unlimitedDuration)
+            {
+                return;
+            }
+
             float previousRemaining =
                 remainingSeconds;
 
@@ -482,8 +506,10 @@ namespace ForestArchery.TimedGame
                     averageScorePerArrow =
                         averageScore,
                     durationSeconds =
-                        Mathf.RoundToInt(
-                            configuredDurationSeconds)
+                        unlimitedDuration
+                            ? 0
+                            : Mathf.RoundToInt(
+                                configuredDurationSeconds)
                 };
         }
 

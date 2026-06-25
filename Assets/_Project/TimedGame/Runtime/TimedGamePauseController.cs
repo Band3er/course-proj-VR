@@ -68,6 +68,21 @@ namespace ForestArchery.TimedGame
             RestoreSimulation();
         }
 
+        // FOREST_ARCHERY_FREE_PLAY_DIRECT_QUIT_STAGE10E
+        private void HandleRoundHudButton()
+        {
+            if (
+                menuController != null &&
+                menuController.CurrentRoundIsPractice
+            )
+            {
+                QuitRound();
+                return;
+            }
+
+            PauseRound();
+        }
+
         public void PauseRound()
         {
             if (
@@ -144,7 +159,7 @@ namespace ForestArchery.TimedGame
             {
                 pauseButton.onClick.RemoveAllListeners();
                 pauseButton.onClick.AddListener(
-                    PauseRound);
+                    HandleRoundHudButton);
             }
 
             if (resumeButton != null)
@@ -230,6 +245,8 @@ namespace ForestArchery.TimedGame
         private void ApplyState(
             TimedRoundState state)
         {
+            UpdateRoundHudButtonPresentation();
+
             switch (state)
             {
                 case TimedRoundState.Countdown:
@@ -313,6 +330,31 @@ namespace ForestArchery.TimedGame
 
                     break;
             }
+        }
+
+        private void UpdateRoundHudButtonPresentation()
+        {
+            if (pauseButton == null)
+            {
+                return;
+            }
+
+            Text label =
+                pauseButton.GetComponentInChildren<Text>(
+                    true);
+
+            if (label == null)
+            {
+                return;
+            }
+
+            label.text =
+                (
+                    menuController != null &&
+                    menuController.CurrentRoundIsPractice
+                )
+                    ? "QUIT"
+                    : "PAUSE";
         }
 
         private void FreezeSimulation()

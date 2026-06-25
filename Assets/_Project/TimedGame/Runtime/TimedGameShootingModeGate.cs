@@ -11,6 +11,9 @@ namespace ForestArchery.TimedGame
         [SerializeField]
         private TimedRoundController roundController;
 
+        [SerializeField]
+        private TimedGameMenuController menuController;
+
         [Header("Bow and String Controller Interactables")]
         [SerializeField]
         private GrabInteractable[] controllerInteractables;
@@ -109,6 +112,12 @@ namespace ForestArchery.TimedGame
                 roundController =
                     GetComponent<TimedRoundController>();
             }
+
+            if (menuController == null)
+            {
+                menuController =
+                    GetComponent<TimedGameMenuController>();
+            }
         }
 
         private void CaptureInitialStates()
@@ -183,6 +192,26 @@ namespace ForestArchery.TimedGame
             bool activeRound =
                 IsActiveRoundState(
                     state);
+
+            // FOREST_ARCHERY_FREE_PLAY_SHOOTING_BYPASS_STAGE10E
+            if (
+                activeRound &&
+                menuController != null &&
+                menuController.CurrentRoundIsPractice
+            )
+            {
+                lastState =
+                    state;
+
+                lastMode =
+                    mode;
+
+                IsRoundModeLocked =
+                    false;
+
+                RestoreInitialStates();
+                return;
+            }
 
             if (
                 !force &&
